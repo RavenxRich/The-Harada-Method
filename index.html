@@ -246,6 +246,19 @@
                 box-shadow: none !important;
             }
             
+            /* Ensure colors print */
+            .cell.gray {
+                background: #bdc3c7 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .cell.center {
+                background: #f7dc6f !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
             @page {
                 size: letter;
                 margin: 0.5in;
