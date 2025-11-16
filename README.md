@@ -1,7 +1,7 @@
 Harada Method Template
+
 A beautiful, interactive web-based template for implementing the Harada Method goal-setting framework. Transform your main goal into 64 actionable steps with this easy-to-use digital tool.
-Show Image
-Show Image
+
 🎯 What is the Harada Method?
 The Harada Method is a proven goal-achievement system developed by Japanese educator Takashi Harada. It breaks down one main goal into:
 
@@ -23,21 +23,22 @@ The Harada Method is a proven goal-achievement system developed by Japanese educ
 🚀 Quick Start
 Online Use
 
-Open index.html in your web browser
+Open [index.html](https://ravenxrich.github.io/The-Harada-Method/) in your web browser
 Start typing in any cell
 Your work auto-saves as you type
 
 GitHub Pages
-Visit the live demo: https://YOUR-USERNAME.github.io/harada-method-template/
+Visit the live demo: [https://ravenxrich.github.io/The-Harada-Method/]
 Local Installation
 bash# Clone the repository
-git clone https://github.com/YOUR-USERNAME/harada-method-template.git
+git clone [https://ravenxrich.github.io/The-Harada-Method/.git]
 
 # Navigate to the folder
 cd harada-method-template
 
 # Open in browser
 open index.html
+
 📖 How to Use
 
 Write Your Main Goal - Click the yellow center cell and enter your primary objective
