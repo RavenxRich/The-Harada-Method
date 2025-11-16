@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harada Method Template</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 30px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            max-width: 1000px;
+            width: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            grid-template-rows: repeat(9, 1fr);
+            gap: 0;
+            border: 5px solid #2c3e50;
+            width: 100%;
+            aspect-ratio: 1;
+            max-width: 850px;
+            margin: 0 auto 30px;
+            background: white;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .cell {
+            border: 1px solid #bdc3c7;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            transition: all 0.2s ease;
+        }
+        
+        .cell:hover {
+            background: #ecf0f1;
+        }
+        
+        .cell textarea {
+            width: 100%;
+            height: 100%;
+            border: none;
+            padding: 8px;
+            font-size: 12px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            resize: none;
+            background: transparent;
+            text-align: center;
+            outline: none;
+            color: #2c3e50;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+        
+        .cell textarea::placeholder {
+            color: #95a5a6;
+            font-style: italic;
+        }
+        
+        .cell textarea:focus {
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: inset 0 0 0 2px #3498db;
+        }
+        
+        /* Thick borders for 3x3 sections */
+        .cell:nth-child(3n) {
+            border-right: 5px solid #2c3e50;
+        }
+        
+        .cell:nth-child(n+19):nth-child(-n+27),
+        .cell:nth-child(n+46):nth-child(-n+54) {
+            border-bottom: 5px solid #2c3e50;
+        }
+        
+        /* Gray cells - only the 8 focus area cells */
+        .cell.gray {
+            background: #bdc3c7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .cell.gray:hover {
+            background: #95a5a6;
+        }
+        
+        .cell.gray textarea {
+            padding: 10px 5px 5px 5px;
+            text-align: center;
+        }
+        
+        .cell.gray textarea::placeholder {
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        
+        /* Center yellow cell */
+        .cell.center {
+            background: linear-gradient(135deg, #f9e79f 0%, #f7dc6f 100%);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .cell.center:hover {
+            background: linear-gradient(135deg, #f7dc6f 0%, #f4d03f 100%);
+        }
+        
+        .cell.center textarea {
+            font-weight: 600;
+            font-size: 11px;
+            color: #2c3e50;
+            padding: 3px 5px 20px 5px;
+            text-align: center;
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button.secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+        }
+        
+        button.secondary:hover {
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.6);
+        }
+        
+        button.tertiary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+        }
+        
+        button.tertiary:hover {
+            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.6);
+        }
+        
+        .instructions {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .instructions h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .instructions ol {
+            margin-left: 20px;
+            color: #555;
+            line-height: 1.8;
+        }
+        
+        @media print {
+            body {
+                padding: 0;
+                background: white;
+            }
+            
+            .container {
+                box-shadow: none;
+                padding: 20px;
+                border-radius: 0;
+            }
+            
+            .buttons, .instructions, .header p {
+                display: none;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+            
+            .cell textarea {
+                box-shadow: none !important;
+            }
+            
+            @page {
+                size: letter;
+                margin: 0.5in;
+            }
+        }
+        
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .cell textarea {
+                font-size: 10px;
+                padding: 5px;
+            }
+            
+            button {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Harada Method Template</h1>
+            <p>Transform your goal into 64 actionable steps</p>
+        </div>
+        
+        <div class="instructions">
+            <h3>How to Use This Template</h3>
+            <ol>
+                <li>Write your main goal in the center yellow cell</li>
+                <li>Identify 8 key focus areas in the gray cells surrounding the center</li>
+                <li>For each focus area, define 8 specific action steps in the white cells</li>
+                <li>Work through your 64 action steps systematically to achieve your goal</li>
+            </ol>
+        </div>
+        
+        <div class="main-grid" id="grid"></div>
+        
+        <div class="buttons">
+            <button onclick="window.print()">🖨️ Print Template</button>
+            <button class="tertiary" onclick="downloadPDF()">📄 Save as PDF</button>
+            <button class="secondary" onclick="clearAll()">🗑️ Clear All</button>
+        </div>
+    </div>
+    
+    <script>
+        const grid = document.getElementById('grid');
+        
+        // The 8 cells with black circles in the image - these are the Focus Areas
+        // Looking at the 9x9 grid (0-80), the circled cells are:
+        // Top-left section: cell 10, Top-middle: 13, Top-right: 16
+        // Middle-left: 37, Middle-right: 43
+        // Bottom-left: 64, Bottom-middle: 67, Bottom-right: 70
+        const focusAreaCells = [10, 13, 16, 37, 43, 64, 67, 70];
+        const centerCell = 40; // The yellow center cell
+        
+        // Create 81 cells
+        for (let i = 0; i < 81; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            
+            // Add gray background to focus area cells
+            if (focusAreaCells.includes(i)) {
+                cell.classList.add('gray');
+            }
+            
+            // Add center yellow cell
+            if (i === centerCell) {
+                cell.classList.add('center');
+            }
+            
+            // Add textarea for editing
+            const textarea = document.createElement('textarea');
+            if (i === centerCell) {
+                textarea.placeholder = 'Your Main Goal';
+            } else if (focusAreaCells.includes(i)) {
+                textarea.placeholder = 'Focus Area';
+            } else {
+                textarea.placeholder = 'Action Step';
+            }
+            cell.appendChild(textarea);
+            
+            grid.appendChild(cell);
+        }
+        
+        function downloadPDF() {
+            window.print();
+        }
+        
+        function clearAll() {
+            if (confirm('Are you sure you want to clear all content? This action cannot be undone.')) {
+                const textareas = document.querySelectorAll('textarea');
+                textareas.forEach(ta => {
+                    ta.value = '';
+                });
+                
+                // Clear from localStorage
+                for (let i = 0; i < 81; i++) {
+                    localStorage.removeItem(`harada_cell_${i}`);
+                }
+                
+                alert('✓ Template cleared successfully!');
+            }
+        }
+        
+        // Auto-save functionality with debouncing
+        const textareas = document.querySelectorAll('textarea');
+        textareas.forEach((ta, index) => {
+            // Load saved content
+            const saved = localStorage.getItem(`harada_cell_${index}`);
+            if (saved) ta.value = saved;
+            
+            // Save on input with debounce
+            let timeout;
+            ta.addEventListener('input', () => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    localStorage.setItem(`harada_cell_${index}`, ta.value);
+                }, 500);
+            });
+        });
+        
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Ctrl/Cmd + P for print
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                e.preventDefault();
+                window.print();
+            }
+        });
+    </script>
+</body>
+</html>
