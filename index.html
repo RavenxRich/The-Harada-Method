@@ -23,10 +23,10 @@
         
         .container {
             background: white;
-            padding: 40px;
-            border-radius: 12px;
+            padding: 50px;
+            border-radius: 16px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-            max-width: 1000px;
+            max-width: 1100px;
             width: 100%;
         }
         
@@ -51,107 +51,163 @@
             display: grid;
             grid-template-columns: repeat(9, 1fr);
             grid-template-rows: repeat(9, 1fr);
-            gap: 0;
-            border: 5px solid #2c3e50;
+            gap: 2px;
+            border: 4px solid #2c3e50;
             width: 100%;
             aspect-ratio: 1;
-            max-width: 850px;
+            max-width: 900px;
             margin: 0 auto 30px;
-            background: white;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            background: #2c3e50;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            padding: 2px;
         }
         
         .cell {
-            border: 1px solid #bdc3c7;
+            border: none;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             background: white;
             transition: all 0.2s ease;
+            min-height: 0;
+            min-width: 0;
         }
         
         .cell:hover {
-            background: #ecf0f1;
+            background: #f8f9fa;
+            transform: scale(1.02);
+            z-index: 1;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
         .cell textarea {
             width: 100%;
             height: 100%;
             border: none;
-            padding: 8px;
-            font-size: 12px;
+            padding: 10px 8px;
+            font-size: 13px;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             resize: none;
             background: transparent;
             text-align: center;
             outline: none;
             color: #2c3e50;
-            line-height: 1.4;
+            line-height: 1.5;
             word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         
         .cell textarea::placeholder {
             color: #95a5a6;
             font-style: italic;
+            opacity: 0.7;
         }
         
         .cell textarea:focus {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.95);
             box-shadow: inset 0 0 0 2px #3498db;
         }
         
-        /* Thick borders for 3x3 sections */
-        .cell:nth-child(3n) {
-            border-right: 5px solid #2c3e50;
+        /* Thick borders for 3x3 sections - vertical dividers */
+        .cell:nth-child(9n+3),
+        .cell:nth-child(9n+6) {
+            border-right: 3px solid #2c3e50;
         }
         
-        .cell:nth-child(n+19):nth-child(-n+27),
+        .cell:nth-child(9n+1) {
+            border-left: 3px solid #2c3e50;
+        }
+        
+        /* Horizontal dividers between 3x3 sections */
+        .cell:nth-child(n+19):nth-child(-n+27) {
+            border-bottom: 3px solid #2c3e50;
+        }
+        
         .cell:nth-child(n+46):nth-child(-n+54) {
-            border-bottom: 5px solid #2c3e50;
+            border-bottom: 3px solid #2c3e50;
+        }
+        
+        .cell:nth-child(n+1):nth-child(-n+9) {
+            border-top: 3px solid #2c3e50;
         }
         
         /* Gray cells - only the 8 focus area cells */
         .cell.gray {
-            background: #bdc3c7;
+            background: linear-gradient(135deg, #d5d8dc 0%, #bdc3c7 100%);
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
         }
         
         .cell.gray:hover {
-            background: #95a5a6;
+            background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%);
+        }
+        
+        .cell.gray::before {
+            content: '★';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            font-size: 10px;
+            color: #2c3e50;
+            opacity: 0.5;
         }
         
         .cell.gray textarea {
-            padding: 10px 5px 5px 5px;
+            padding: 12px 8px;
             text-align: center;
+            font-weight: 600;
+            font-size: 13px;
         }
         
         .cell.gray textarea::placeholder {
-            color: #2c3e50;
-            font-weight: 500;
+            color: #34495e;
+            font-weight: 600;
+            opacity: 0.8;
         }
         
         /* Center yellow cell */
         .cell.center {
             background: linear-gradient(135deg, #f9e79f 0%, #f7dc6f 100%);
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.08);
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+        }
+        
+        .cell.center::after {
+            content: 'GOAL';
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 8px;
+            font-weight: 700;
+            color: #2c3e50;
+            opacity: 0.4;
+            letter-spacing: 1px;
         }
         
         .cell.center:hover {
             background: linear-gradient(135deg, #f7dc6f 0%, #f4d03f 100%);
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.1);
         }
         
         .cell.center textarea {
-            font-weight: 600;
-            font-size: 11px;
+            font-weight: 700;
+            font-size: 14px;
             color: #2c3e50;
-            padding: 3px 5px 20px 5px;
+            padding: 12px 8px 20px 8px;
             text-align: center;
+        }
+        
+        .cell.center textarea::placeholder {
+            color: #34495e;
+            font-weight: 700;
+            opacity: 0.7;
         }
         
         .buttons {
@@ -265,13 +321,44 @@
             }
         }
         
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 8px;
+            min-width: 100px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+        
         @media screen and (max-width: 768px) {
             body {
                 padding: 15px;
             }
             
             .container {
-                padding: 20px;
+                padding: 25px;
             }
             
             .header h1 {
@@ -279,13 +366,36 @@
             }
             
             .cell textarea {
-                font-size: 10px;
-                padding: 5px;
+                font-size: 11px;
+                padding: 8px 6px;
+            }
+            
+            .cell.gray textarea,
+            .cell.center textarea {
+                font-size: 11px;
+            }
+            
+            .main-grid {
+                max-width: 100%;
+                gap: 1px;
             }
             
             button {
                 padding: 12px 20px;
                 font-size: 14px;
+            }
+            
+            .stats {
+                gap: 15px;
+            }
+            
+            .stat-item {
+                min-width: 80px;
+                padding: 10px 15px;
+            }
+            
+            .stat-value {
+                font-size: 20px;
             }
         }
     </style>
@@ -309,13 +419,34 @@
         
         <div class="main-grid" id="grid"></div>
         
-        <div style="text-align: center; margin: 20px 0; color: #7f8c8d; font-size: 14px; font-style: italic;">
-            Inspired by Takashi Harada
+        <div class="stats" id="stats">
+            <div class="stat-item">
+                <span class="stat-value" id="goalProgress">0%</span>
+                <span class="stat-label">Goal</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="focusProgress">0/8</span>
+                <span class="stat-label">Focus Areas</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="actionsProgress">0/64</span>
+                <span class="stat-label">Actions</span>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin: 20px 0; color: #7f8c8d; font-size: 13px;">
+            <div style="font-style: italic; margin-bottom: 8px;">Inspired by Takashi Harada</div>
+            <div style="font-size: 11px; color: #95a5a6; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 0 20px;">
+                This template implements the Harada Method for personal use. 
+                Commercial use is prohibited. See LICENSE for details.
+            </div>
         </div>
         
         <div class="buttons">
             <button onclick="window.print()">🖨️ Print Template</button>
             <button class="tertiary" onclick="downloadPDF()">📄 Save as PDF</button>
+            <button onclick="exportData()" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);">💾 Export Data</button>
+            <button onclick="importData()" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);">📥 Import Data</button>
             <button class="secondary" onclick="clearAll()">🗑️ Clear All</button>
         </div>
     </div>
@@ -364,7 +495,7 @@
             window.print();
         }
         
-        function clearAll() {
+        function clearAll(event) {
             if (confirm('Are you sure you want to clear all content? This action cannot be undone.')) {
                 const textareas = document.querySelectorAll('textarea');
                 textareas.forEach(ta => {
@@ -376,11 +507,99 @@
                     localStorage.removeItem(`harada_cell_${i}`);
                 }
                 
-                alert('✓ Template cleared successfully!');
+                updateProgress();
+                
+                // Show success feedback
+                if (event && event.target) {
+                    const btn = event.target;
+                    const originalText = btn.textContent;
+                    btn.textContent = '✓ Cleared!';
+                    btn.style.background = 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '';
+                    }, 2000);
+                }
             }
         }
         
-        // Auto-save functionality with debouncing
+        // Export/Import functionality
+        function exportData() {
+            const textareas = document.querySelectorAll('textarea');
+            const data = {};
+            textareas.forEach((ta, index) => {
+                if (ta.value.trim()) {
+                    data[index] = ta.value;
+                }
+            });
+            
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `harada-method-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'application/json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        try {
+                            const textareas = document.querySelectorAll('textarea');
+                            const data = JSON.parse(event.target.result);
+                            Object.keys(data).forEach(index => {
+                                const idx = parseInt(index);
+                                if (idx >= 0 && idx < 81) {
+                                    textareas[idx].value = data[index];
+                                    localStorage.setItem(`harada_cell_${idx}`, data[index]);
+                                }
+                            });
+                            updateProgress();
+                            alert('✓ Data imported successfully!');
+                        } catch (error) {
+                            alert('Error importing data. Please check the file format.');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+        
+        // Progress tracking function
+        function updateProgress() {
+            const textareas = document.querySelectorAll('textarea');
+            let goalFilled = false;
+            let focusFilled = 0;
+            let actionsFilled = 0;
+            
+            textareas.forEach((ta, index) => {
+                const value = ta.value.trim();
+                if (value) {
+                    if (index === centerCell) {
+                        goalFilled = true;
+                    } else if (focusAreaCells.includes(index)) {
+                        focusFilled++;
+                    } else {
+                        actionsFilled++;
+                    }
+                }
+            });
+            
+            document.getElementById('goalProgress').textContent = goalFilled ? '100%' : '0%';
+            document.getElementById('focusProgress').textContent = `${focusFilled}/8`;
+            document.getElementById('actionsProgress').textContent = `${actionsFilled}/64`;
+        }
+        
+        // Auto-save functionality with debouncing and progress tracking
         const textareas = document.querySelectorAll('textarea');
         textareas.forEach((ta, index) => {
             // Load saved content
@@ -393,7 +612,43 @@
                 clearTimeout(timeout);
                 timeout = setTimeout(() => {
                     localStorage.setItem(`harada_cell_${index}`, ta.value);
+                    updateProgress();
                 }, 500);
+                
+                // Update progress immediately for better UX
+                updateProgress();
+            });
+        });
+        
+        // Initial progress update
+        updateProgress();
+        
+        // Keyboard navigation enhancement
+        textareas.forEach((ta, index) => {
+            ta.addEventListener('keydown', (e) => {
+                const currentRow = Math.floor(index / 9);
+                const currentCol = index % 9;
+                
+                // Arrow key navigation
+                if (e.key === 'ArrowUp' && currentRow > 0) {
+                    e.preventDefault();
+                    textareas[index - 9].focus();
+                } else if (e.key === 'ArrowDown' && currentRow < 8) {
+                    e.preventDefault();
+                    textareas[index + 9].focus();
+                } else if (e.key === 'ArrowLeft' && currentCol > 0) {
+                    e.preventDefault();
+                    textareas[index - 1].focus();
+                } else if (e.key === 'ArrowRight' && currentCol < 8) {
+                    e.preventDefault();
+                    textareas[index + 1].focus();
+                }
+                
+                // Tab navigation (shift+tab goes backwards)
+                if (e.key === 'Tab' && !e.shiftKey && index < 80) {
+                    // Allow default tab behavior but update progress
+                    setTimeout(updateProgress, 10);
+                }
             });
         });
         

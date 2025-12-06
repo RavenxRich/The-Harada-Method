@@ -92,7 +92,20 @@ Your goals and action steps remain completely private
 Clear browser data to remove all saved content
 
 📄 License
-MIT License - feel free to use, modify, and distribute
+
+**Non-Commercial Use License** - Please see [LICENSE](LICENSE) file for full details.
+
+This template is provided free of charge for personal and educational use. 
+The Harada Method itself is the intellectual property of Takashi Harada.
+
+**Key Points:**
+- ✅ Free to use, modify, and share for **non-commercial purposes**
+- ✅ Attribution to Takashi Harada required
+- ❌ **Commercial use and selling are prohibited**
+- ❌ Cannot be included in paid products or services without permission
+
+This template is a tool for implementing Takashi Harada's methodology and 
+acknowledges his original work.
 🤝 Contributing
 Contributions are welcome! Feel free to:
 
