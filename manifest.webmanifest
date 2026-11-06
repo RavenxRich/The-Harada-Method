@@ -1,0 +1,13 @@
+{
+  "name": "Open Window 64 — Harada Method worksheet",
+  "short_name": "OW64",
+  "description": "One goal, eight focus areas, sixty-four actions. Fill the sheet and stamp each action as you finish it.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#F2F3F0",
+  "theme_color": "#F2F3F0",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

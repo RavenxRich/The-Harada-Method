@@ -1,665 +1,1601 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Harada Method Template</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            padding: 30px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-        
-        .container {
-            background: white;
-            padding: 50px;
-            border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-            max-width: 1100px;
-            width: 100%;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .header h1 {
-            font-size: 32px;
-            color: #2c3e50;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-        
-        .header p {
-            color: #7f8c8d;
-            font-size: 16px;
-        }
-        
-        .main-grid {
-            display: grid;
-            grid-template-columns: repeat(9, 1fr);
-            grid-template-rows: repeat(9, 1fr);
-            gap: 2px;
-            border: 4px solid #2c3e50;
-            width: 100%;
-            aspect-ratio: 1;
-            max-width: 900px;
-            margin: 0 auto 30px;
-            background: #2c3e50;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-            padding: 2px;
-        }
-        
-        .cell {
-            border: none;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: white;
-            transition: all 0.2s ease;
-            min-height: 0;
-            min-width: 0;
-        }
-        
-        .cell:hover {
-            background: #f8f9fa;
-            transform: scale(1.02);
-            z-index: 1;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .cell textarea {
-            width: 100%;
-            height: 100%;
-            border: none;
-            padding: 10px 8px;
-            font-size: 13px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            resize: none;
-            background: transparent;
-            text-align: center;
-            outline: none;
-            color: #2c3e50;
-            line-height: 1.5;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-        }
-        
-        .cell textarea::placeholder {
-            color: #95a5a6;
-            font-style: italic;
-            opacity: 0.7;
-        }
-        
-        .cell textarea:focus {
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: inset 0 0 0 2px #3498db;
-        }
-        
-        /* Thick borders for 3x3 sections - vertical dividers */
-        .cell:nth-child(9n+3),
-        .cell:nth-child(9n+6) {
-            border-right: 3px solid #2c3e50;
-        }
-        
-        .cell:nth-child(9n+1) {
-            border-left: 3px solid #2c3e50;
-        }
-        
-        /* Horizontal dividers between 3x3 sections */
-        .cell:nth-child(n+19):nth-child(-n+27) {
-            border-bottom: 3px solid #2c3e50;
-        }
-        
-        .cell:nth-child(n+46):nth-child(-n+54) {
-            border-bottom: 3px solid #2c3e50;
-        }
-        
-        .cell:nth-child(n+1):nth-child(-n+9) {
-            border-top: 3px solid #2c3e50;
-        }
-        
-        /* Gray cells - only the 8 focus area cells */
-        .cell.gray {
-            background: linear-gradient(135deg, #d5d8dc 0%, #bdc3c7 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-        
-        .cell.gray:hover {
-            background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%);
-        }
-        
-        .cell.gray::before {
-            content: '★';
-            position: absolute;
-            top: 4px;
-            left: 4px;
-            font-size: 10px;
-            color: #2c3e50;
-            opacity: 0.5;
-        }
-        
-        .cell.gray textarea {
-            padding: 12px 8px;
-            text-align: center;
-            font-weight: 600;
-            font-size: 13px;
-        }
-        
-        .cell.gray textarea::placeholder {
-            color: #34495e;
-            font-weight: 600;
-            opacity: 0.8;
-        }
-        
-        /* Center yellow cell */
-        .cell.center {
-            background: linear-gradient(135deg, #f9e79f 0%, #f7dc6f 100%);
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.08);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-        
-        .cell.center::after {
-            content: 'GOAL';
-            position: absolute;
-            bottom: 4px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 8px;
-            font-weight: 700;
-            color: #2c3e50;
-            opacity: 0.4;
-            letter-spacing: 1px;
-        }
-        
-        .cell.center:hover {
-            background: linear-gradient(135deg, #f7dc6f 0%, #f4d03f 100%);
-            box-shadow: inset 0 0 25px rgba(0,0,0,0.1);
-        }
-        
-        .cell.center textarea {
-            font-weight: 700;
-            font-size: 14px;
-            color: #2c3e50;
-            padding: 12px 8px 20px 8px;
-            text-align: center;
-        }
-        
-        .cell.center textarea::placeholder {
-            color: #34495e;
-            font-weight: 700;
-            opacity: 0.7;
-        }
-        
-        .buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 14px 28px;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-        }
-        
-        button:active {
-            transform: translateY(0);
-        }
-        
-        button.secondary {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
-        }
-        
-        button.secondary:hover {
-            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.6);
-        }
-        
-        button.tertiary {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
-        }
-        
-        button.tertiary:hover {
-            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.6);
-        }
-        
-        .instructions {
-            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            border-left: 4px solid #667eea;
-        }
-        
-        .instructions h3 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-            font-size: 18px;
-        }
-        
-        .instructions ol {
-            margin-left: 20px;
-            color: #555;
-            line-height: 1.8;
-        }
-        
-        @media print {
-            body {
-                padding: 0;
-                background: white;
-            }
-            
-            .container {
-                box-shadow: none;
-                padding: 20px;
-                border-radius: 0;
-            }
-            
-            .buttons, .instructions, .header p {
-                display: none;
-            }
-            
-            .header h1 {
-                font-size: 24px;
-                margin-bottom: 20px;
-            }
-            
-            .cell textarea {
-                box-shadow: none !important;
-            }
-            
-            /* Ensure colors print */
-            .cell.gray {
-                background: #bdc3c7 !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-            
-            .cell.center {
-                background: #f7dc6f !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-            
-            @page {
-                size: letter;
-                margin: 0.5in;
-            }
-        }
-        
-        .stats {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin: 25px 0;
-            flex-wrap: wrap;
-        }
-        
-        .stat-item {
-            text-align: center;
-            padding: 12px 20px;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border-radius: 8px;
-            min-width: 100px;
-        }
-        
-        .stat-value {
-            font-size: 24px;
-            font-weight: 700;
-            color: #2c3e50;
-            display: block;
-        }
-        
-        .stat-label {
-            font-size: 12px;
-            color: #7f8c8d;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-top: 4px;
-        }
-        
-        @media screen and (max-width: 768px) {
-            body {
-                padding: 15px;
-            }
-            
-            .container {
-                padding: 25px;
-            }
-            
-            .header h1 {
-                font-size: 24px;
-            }
-            
-            .cell textarea {
-                font-size: 11px;
-                padding: 8px 6px;
-            }
-            
-            .cell.gray textarea,
-            .cell.center textarea {
-                font-size: 11px;
-            }
-            
-            .main-grid {
-                max-width: 100%;
-                gap: 1px;
-            }
-            
-            button {
-                padding: 12px 20px;
-                font-size: 14px;
-            }
-            
-            .stats {
-                gap: 15px;
-            }
-            
-            .stat-item {
-                min-width: 80px;
-                padding: 10px 15px;
-            }
-            
-            .stat-value {
-                font-size: 20px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open Window 64 — Harada Method worksheet</title>
+<meta name="description" content="A worksheet for the Harada Method: one goal, eight focus areas, sixty-four actions. Fill it in, stamp each action as you finish it. Works offline, stores nothing on a server.">
+<meta name="theme-color" content="#F2F3F0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14161A" media="(prefers-color-scheme: dark)">
+<meta property="og:title" content="Open Window 64 — Harada Method worksheet">
+<meta property="og:description" content="One goal, eight focus areas, sixty-four actions. Fill the sheet, stamp each action as you finish it.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans+Condensed:wght@600&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<style>
+:root{
+  --paper:#F2F3F0;
+  --surface:#FBFBF9;
+  --surface-sunk:#EFF0ED;
+  --ink:#16181A;
+  --ink-soft:#5C6166;
+  --ink-faint:#686E6B;
+  --rule:#C9CDC8;
+  --rule-heavy:#2A2E31;
+  --seal:#B0202E;
+  --seal-ink:#B0202E;
+  --goal-wash:#EDE3C8;
+  --focus-wash:#E4E8E4;
+  --focus-done-wash:#DFE6DE;
+  --focus:#1D64C8;
+  --shadow:0 1px 0 rgba(22,24,26,.04), 0 10px 30px -18px rgba(22,24,26,.35);
+  --sheet-edge:#DDE0DB;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#14161A; --surface:#1C1F24; --surface-sunk:#191C20;
+    --ink:#E8EAE6; --ink-soft:#A2A9A4; --ink-faint:#8A918D;
+    --rule:#333942; --rule-heavy:#8A9299;
+    --seal:#E0566A; --seal-ink:#E0566A;
+    --goal-wash:#2E2A1E; --focus-wash:#232830; --focus-done-wash:#1F2A24;
+    --focus:#6FA8FF;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 36px -20px rgba(0,0,0,.8);
+    --sheet-edge:#2A2F36;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#14161A; --surface:#1C1F24; --surface-sunk:#191C20;
+  --ink:#E8EAE6; --ink-soft:#A2A9A4; --ink-faint:#8A918D;
+  --rule:#333942; --rule-heavy:#8A9299;
+  --seal:#E0566A; --seal-ink:#E0566A;
+  --goal-wash:#2E2A1E; --focus-wash:#232830; --focus-done-wash:#1F2A24;
+  --focus:#6FA8FF;
+  --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 36px -20px rgba(0,0,0,.8);
+  --sheet-edge:#2A2F36;
+  color-scheme:dark;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,"Helvetica Neue",sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.45;
+  min-height:100vh;
+  padding:clamp(12px,3vw,40px) clamp(12px,3vw,32px);
+  display:flex; justify-content:center;
+  /* faint drafting grid on the desk surface */
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--rule) 34%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--rule) 34%, transparent) 1px, transparent 1px);
+  background-size:28px 28px;
+  background-position:center;
+}
+
+.sheet{
+  width:100%; max-width:1040px;
+  background:var(--surface);
+  border:1px solid var(--sheet-edge);
+  box-shadow:var(--shadow);
+  padding:clamp(16px,2.6vw,34px);
+}
+
+/* ─── identification rail ─────────────────────────────── */
+.rail{
+  display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;
+  padding-bottom:10px; border-bottom:1px solid var(--rule);
+}
+.eyebrow{
+  font-family:"IBM Plex Mono",ui-monospace,monospace; font-weight:500;
+  font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--ink-soft);
+}
+.eyebrow b{color:var(--ink);font-weight:500}
+.rail .spacer{flex:1 1 60px}
+.rail-tools{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+
+h1{
+  font-family:"IBM Plex Sans Condensed",ui-sans-serif,system-ui,sans-serif;
+  font-weight:600; font-size:clamp(22px,3.4vw,30px);
+  letter-spacing:-.01em; line-height:1.1; margin:16px 0 2px;
+}
+.subtitle{color:var(--ink-soft);font-size:14px;max-width:62ch}
+.subtitle a{color:inherit;text-decoration-color:var(--rule);text-underline-offset:2px}
+.subtitle a:hover{text-decoration-color:currentColor}
+
+/* ─── form block: goal + deadline ─────────────────────── */
+.formblock{
+  display:grid; grid-template-columns:minmax(0,1fr) minmax(130px,auto);
+  gap:0 18px; margin:20px 0 0; align-items:end;
+}
+.field{display:flex;flex-direction:column;gap:3px;min-width:0}
+.field > label{
+  font-family:"IBM Plex Mono",ui-monospace,monospace; font-weight:500;
+  font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint);
+}
+.field input{
+  font:inherit; color:var(--ink); background:transparent;
+  border:0; border-bottom:1px solid var(--rule); padding:5px 2px;
+  border-radius:0; width:100%; min-width:0;
+}
+.field input::placeholder{color:var(--ink-faint)}
+.field input:focus-visible{outline:none;border-bottom:2px solid var(--focus);padding-bottom:4px}
+#goalLine{font-size:clamp(16px,2.2vw,20px);font-weight:600}
+#deadline{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px}
+
+/* ─── 64-tick gauge ───────────────────────────────────── */
+.gauge-wrap{margin:18px 0 4px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.gauge{display:flex;gap:2px;flex:1 1 320px;min-width:200px;height:22px;align-items:stretch}
+.gauge i{
+  flex:1 1 0; background:var(--surface-sunk);
+  border-top:1px solid var(--rule); border-bottom:1px solid var(--rule);
+  transition:background .18s ease;
+}
+.gauge i[data-state="filled"]{background:color-mix(in srgb, var(--ink) 22%, transparent)}
+.gauge i[data-state="done"]{background:var(--seal)}
+.gauge i:nth-child(8n){margin-right:3px}
+.readout{
+  font-family:"IBM Plex Mono",ui-monospace,monospace; font-weight:500;
+  font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft);
+  white-space:nowrap;
+}
+.readout b{color:var(--ink);font-weight:500}
+.readout .sealnum{color:var(--seal-ink)}
+
+/* ─── the sheet grid: 9 × 9 ───────────────────────────── */
+.view{margin-top:22px}
+.sheetgrid{
+  display:grid; grid-template-columns:repeat(9,1fr); grid-template-rows:repeat(9,1fr);
+  aspect-ratio:1/1; width:100%; max-width:860px; margin:0 auto;
+  border:1.5px solid var(--rule-heavy); background:var(--surface);
+}
+.cell{
+  position:relative; min-width:0; min-height:0;
+  border-right:1px solid var(--rule); border-bottom:1px solid var(--rule);
+  background:var(--surface);
+}
+.cell[data-c="9"]{border-right:0}
+.cell[data-r="9"]{border-bottom:0}
+.cell[data-c="3"],.cell[data-c="6"]{border-right:1.5px solid var(--rule-heavy)}
+.cell[data-r="3"],.cell[data-r="6"]{border-bottom:1.5px solid var(--rule-heavy)}
+
+.cell textarea{
+  position:absolute; left:0; right:0; top:50%; transform:translateY(-50%);
+  width:100%; height:auto; max-height:100%;
+  font-family:inherit; font-size:var(--fs,12px); line-height:1.3;
+  color:var(--ink); background:transparent;
+  border:0; outline:0; resize:none; text-align:center;
+  padding:3px 5px; overflow:hidden;
+  overflow-wrap:break-word; scrollbar-width:none;
+}
+.cell textarea::-webkit-scrollbar{display:none}
+.cell textarea::placeholder{color:var(--ink-faint);opacity:.7}
+/* Driven by an attribute rather than :focus, so the script and the styles
+   always agree about which cell is being edited. */
+.cell[data-editing="1"] textarea{
+  box-shadow:inset 0 0 0 2px var(--focus), 0 10px 28px -12px rgba(0,0,0,.45);
+  background:var(--surface); max-height:none; z-index:6;
+}
+
+/* cell coordinate, printed like a form field number */
+.cell .coord{
+  position:absolute; top:2px; left:4px; z-index:2; pointer-events:none;
+  font-family:"IBM Plex Mono",ui-monospace,monospace; font-weight:500;
+  font-size:8px; letter-spacing:.06em; color:var(--ink-faint); opacity:.75;
+}
+
+/* roles */
+.cell[data-role="goal"]{background:var(--goal-wash)}
+.cell[data-role="goal"] textarea{font-weight:600;font-size:var(--fs,13px)}
+.cell[data-role="focus-ring"],
+.cell[data-role="focus-outer"]{background:var(--focus-wash)}
+.cell[data-role="focus-ring"] textarea,
+.cell[data-role="focus-outer"] textarea{font-weight:600}
+.cell[data-role="focus-outer"]{box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--rule-heavy) 30%, transparent)}
+.cell[data-role="focus-outer"][data-complete="1"]{background:var(--focus-done-wash)}
+
+/* focus tally, e.g. 5/8 done in that block */
+.tally{
+  position:absolute; bottom:2px; right:4px; z-index:2; pointer-events:none;
+  font-family:"IBM Plex Mono",ui-monospace,monospace; font-weight:500;
+  font-size:8.5px; letter-spacing:.04em; color:var(--ink-soft);
+}
+.tally[data-complete="1"]{color:var(--seal-ink)}
+
+/* ─── the seal: stamped when an action is finished ────── */
+.seal-toggle{
+  position:absolute; bottom:0; right:0; z-index:4;
+  width:26px; height:26px; margin:0; padding:0;
+  appearance:none; -webkit-appearance:none;
+  background:transparent; border:0; cursor:pointer;
+  border-radius:0;
+}
+.seal-toggle:focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
+.seal{
+  position:absolute; bottom:3px; right:3px; z-index:3;
+  width:19px; height:19px; pointer-events:none;
+  color:var(--seal-ink); opacity:0;
+  transform:rotate(-9deg) scale(.6);
+  transition:opacity .14s ease, transform .14s ease;
+}
+.seal-toggle:hover + .seal{opacity:.22;transform:rotate(-9deg) scale(.92)}
+.cell[data-done="1"] .seal{opacity:1;transform:rotate(-9deg) scale(1)}
+.cell[data-done="1"] .seal-toggle:hover + .seal{opacity:.75}
+.cell[data-done="1"] textarea{
+  color:var(--ink-soft);
+  text-decoration:line-through;
+  text-decoration-color:color-mix(in srgb, var(--seal) 55%, transparent);
+  text-decoration-thickness:1px;
+}
+.cell[data-done="1"]{background:color-mix(in srgb, var(--seal) 5%, var(--surface))}
+@keyframes stamp{
+  0%{transform:rotate(-9deg) scale(1.5);opacity:0}
+  40%{transform:rotate(-9deg) scale(.94);opacity:1}
+  70%{transform:rotate(-9deg) scale(1.04)}
+  100%{transform:rotate(-9deg) scale(1);opacity:1}
+}
+.cell[data-done="1"] .seal.stamping{animation:stamp .26s cubic-bezier(.2,.9,.3,1.1)}
+
+/* ─── checklist view ─────────────────────────────────── */
+.checklist{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(290px,1fr))}
+.slip{border:1px solid var(--rule);background:var(--surface);padding:0}
+.slip-head{
+  display:flex;align-items:baseline;gap:8px;
+  padding:9px 12px;border-bottom:1px solid var(--rule);background:var(--focus-wash);
+}
+.slip-head .n{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;font-weight:500;
+  font-size:10px;letter-spacing:.12em;color:var(--ink-soft);
+}
+.slip-head .nm{font-weight:600;font-size:14px;flex:1;min-width:0;overflow-wrap:break-word}
+.slip-head .nm:empty::before{content:"Unnamed focus area";color:var(--ink-faint);font-weight:400}
+.slip-head .ct{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;font-weight:500;
+  font-size:10.5px;color:var(--ink-soft);white-space:nowrap;
+}
+.slip-head .ct[data-complete="1"]{color:var(--seal-ink)}
+.slip ol{list-style:none;margin:0;padding:0}
+.slip li{display:flex;gap:9px;align-items:flex-start;padding:7px 12px;border-bottom:1px solid color-mix(in srgb, var(--rule) 55%, transparent)}
+.slip li:last-child{border-bottom:0}
+.slip li .box{position:relative;flex:0 0 18px;height:18px;margin-top:1px}
+.slip li input[type=checkbox]{
+  appearance:none;-webkit-appearance:none;position:absolute;inset:0;
+  width:18px;height:18px;margin:0;cursor:pointer;
+  border:1px solid var(--rule-heavy);background:transparent;border-radius:0;
+}
+.slip li input[type=checkbox]:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
+.slip li .seal{position:absolute;bottom:-1px;right:-2px;width:19px;height:19px}
+.slip li input:checked ~ .seal{opacity:1;transform:rotate(-9deg) scale(1)}
+.slip li input:checked{border-color:color-mix(in srgb, var(--seal) 45%, transparent)}
+.slip li .txt{flex:1;min-width:0;font-size:13.5px;overflow-wrap:break-word;line-height:1.4}
+.slip li .txt:empty::before{content:"—";color:var(--ink-faint)}
+.slip li input:checked ~ .txt{
+  color:var(--ink-soft);text-decoration:line-through;
+  text-decoration-color:color-mix(in srgb, var(--seal) 55%, transparent);
+}
+.slip-goal{grid-column:1/-1;border:1.5px solid var(--rule-heavy);padding:14px 16px;background:var(--goal-wash)}
+.slip-goal .n{font-family:"IBM Plex Mono",ui-monospace,monospace;font-weight:500;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+.slip-goal .g{font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:600;font-size:clamp(18px,2.6vw,24px);line-height:1.2;margin-top:4px}
+.slip-goal .g:empty::before{content:"No goal written yet";color:var(--ink-faint);font-weight:400}
+.slip-goal .by{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11.5px;color:var(--ink-soft);margin-top:6px}
+
+/* ─── controls ────────────────────────────────────────── */
+.btn{
+  font-family:"IBM Plex Mono",ui-monospace,monospace; font-weight:500;
+  font-size:11px; letter-spacing:.07em; text-transform:uppercase;
+  color:var(--ink); background:var(--surface);
+  border:1px solid var(--rule-heavy); border-radius:0;
+  padding:8px 13px; cursor:pointer;
+  transition:background .14s ease, color .14s ease;
+}
+.btn:hover{background:var(--ink);color:var(--surface)}
+.btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.btn:active{transform:translateY(1px)}
+.btn.quiet{border-color:var(--rule);color:var(--ink-soft);padding:6px 10px}
+.btn.quiet:hover{background:var(--surface-sunk);color:var(--ink);border-color:var(--rule-heavy)}
+.btn.danger:hover{background:var(--seal);border-color:var(--seal);color:#fff}
+.btn[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+
+.seg{display:inline-flex;border:1px solid var(--rule-heavy)}
+.seg .btn{border:0;border-right:1px solid var(--rule-heavy)}
+.seg .btn:last-child{border-right:0}
+
+select.btn{
+  appearance:none;-webkit-appearance:none;
+  padding-right:26px; max-width:200px; text-transform:none; letter-spacing:.02em;
+  background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);
+  background-position:calc(100% - 14px) 52%, calc(100% - 9px) 52%;
+  background-size:5px 5px,5px 5px; background-repeat:no-repeat;
+}
+
+.toolbar{
+  display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+  margin-top:26px; padding-top:16px; border-top:1px solid var(--rule);
+}
+.toolbar .spacer{flex:1 1 20px}
+
+details.manage{position:relative}
+details.manage > summary{
+  list-style:none; cursor:pointer;
+  font-family:"IBM Plex Mono",ui-monospace,monospace; font-weight:500;
+  font-size:11px; letter-spacing:.07em; text-transform:uppercase;
+  color:var(--ink-soft); border:1px solid var(--rule); padding:6px 10px;
+}
+details.manage > summary::-webkit-details-marker{display:none}
+details.manage > summary:hover{color:var(--ink);border-color:var(--rule-heavy)}
+details.manage > summary:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+details.manage[open] > summary{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.manage-body{
+  position:absolute; top:calc(100% + 5px); right:0; z-index:30;
+  display:flex; flex-direction:column; gap:6px; padding:10px;
+  background:var(--surface); border:1px solid var(--rule-heavy); box-shadow:var(--shadow);
+  min-width:184px;
+}
+.manage-body .btn{text-align:left}
+
+.hint{
+  font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:10.5px;
+  letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint);
+  margin:10px auto 0; text-align:center;
+}
+.colophon{
+  margin-top:20px; padding-top:14px; border-top:1px solid var(--rule);
+  font-size:12px; color:var(--ink-faint); line-height:1.6;
+}
+.colophon a{color:var(--ink-soft)}
+
+/* ─── toast ───────────────────────────────────────────── */
+.toasts{
+  position:fixed; bottom:18px; left:50%; transform:translateX(-50%);
+  z-index:100; display:flex; flex-direction:column; gap:8px; align-items:center;
+  width:max-content; max-width:calc(100vw - 24px);
+}
+.toast{
+  display:flex; align-items:center; gap:12px;
+  background:var(--ink); color:var(--paper);
+  border:1px solid var(--ink); padding:10px 14px;
+  font-size:13px; box-shadow:var(--shadow);
+  animation:rise .18s ease;
+}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.toast button{
+  font-family:"IBM Plex Mono",ui-monospace,monospace; font-weight:500;
+  font-size:10.5px; letter-spacing:.09em; text-transform:uppercase;
+  background:transparent; color:var(--paper); border:1px solid color-mix(in srgb, var(--paper) 50%, transparent);
+  padding:5px 9px; cursor:pointer;
+}
+.toast button:hover{background:var(--paper);color:var(--ink)}
+.toast button:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
+dialog{
+  border:1.5px solid var(--rule-heavy); background:var(--surface); color:var(--ink);
+  padding:0; max-width:min(520px,calc(100vw - 32px)); box-shadow:var(--shadow);
+}
+dialog::backdrop{background:color-mix(in srgb, #000 42%, transparent)}
+.dlg-head{display:flex;align-items:baseline;gap:12px;padding:14px 18px;border-bottom:1px solid var(--rule)}
+.dlg-head h2{font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:600;font-size:18px;flex:1}
+.dlg-body{padding:16px 18px}
+.dlg-body dl{display:grid;grid-template-columns:auto 1fr;gap:9px 16px;align-items:baseline;font-size:13.5px}
+.dlg-body dt{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;color:var(--ink-soft);white-space:nowrap}
+kbd{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:10.5px;
+  border:1px solid var(--rule);padding:2px 5px;background:var(--surface-sunk);color:var(--ink);
+}
+.dlg-foot{padding:12px 18px;border-top:1px solid var(--rule);display:flex;justify-content:flex-end;gap:8px}
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+.print-head{display:none}
+
+/* ─── narrow screens ─────────────────────────────────── */
+@media screen and (max-width:720px){
+  body{background-image:none;padding:0}
+  .sheet{border:0;box-shadow:none}
+  .formblock{grid-template-columns:1fr;gap:14px}
+  .gridscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px}
+  .gridscroll .sheetgrid{min-width:620px}
+  .checklist{grid-template-columns:1fr}
+  .toolbar{margin-top:18px;padding-bottom:10px}
+  .toolbar .btn{flex:1 1 auto;text-align:center}
+  .toolbar .spacer{display:none}
+  .readout{white-space:normal}
+  .gauge{flex-basis:100%}
+  .cell .coord{font-size:7px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+}
+
+/* ─── print: chart on page 1, checklist after ─────────── */
+@media print{
+  @page{size:letter landscape;margin:.45in}
+  body{background:#fff;background-image:none;padding:0;display:block}
+  .sheet{max-width:none;border:0;box-shadow:none;padding:0;background:#fff}
+  .rail,.toolbar,.hint,.colophon,.toasts,.subtitle,h1,.gauge-wrap{display:none !important}
+  .print-head{
+    display:flex;align-items:baseline;gap:14px;margin-bottom:8px;
+    padding-bottom:6px;border-bottom:1.5px solid #000;
+  }
+  .print-head .pg{font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:600;font-size:15pt;flex:1}
+  .print-head .pm{font-family:"IBM Plex Mono",monospace;font-size:9pt}
+  .formblock{display:none}
+  .gridscroll{overflow:visible}
+  #sheetView,#listView{display:block !important}
+  .sheetgrid{max-width:none;width:100%;height:6.6in;aspect-ratio:auto;page-break-inside:avoid}
+  .cell[data-editing="1"] textarea{box-shadow:none;background:transparent}
+  .cell textarea{
+    position:absolute; top:0; transform:none;
+    height:100% !important; max-height:none; overflow:hidden;
+    /* Keep the per-cell shrink the screen worked out, scaled for a smaller
+       printed cell, so a long action still fits rather than being cut off. */
+    font-size:clamp(5.4pt, calc(var(--fs, 12px) * .72), 7.6pt) !important;
+    padding:11px 3px 3px;
+  }
+  .cell .coord{font-size:5.4pt}
+  .tally{font-size:6pt}
+  #listView{page-break-before:always;margin-top:0}
+  .checklist{grid-template-columns:1fr 1fr;gap:12px}
+  .slip,.slip-goal{page-break-inside:avoid;border-color:#555}
+  .slip li .txt{font-size:9pt}
+  .seal-toggle{display:none}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+.cell[data-role="action"][data-done="1"] textarea{padding-right:15px}
+
+.viewbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:20px;flex-wrap:wrap}
+.viewbar .note{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-faint)}
+@media print{.viewbar{display:none !important}}
+
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Harada Method Template</h1>
-            <p>Transform your goal into 64 actionable steps</p>
+<div class="sheet">
+
+  <div class="rail">
+    <span class="eyebrow">Harada Method &nbsp;·&nbsp; <b>Open Window 64</b></span>
+    <span class="spacer"></span>
+    <div class="rail-tools">
+      <label class="sr-only" for="chartSel">Active sheet</label>
+      <select class="btn" id="chartSel"></select>
+      <button type="button" class="btn quiet" id="newChart">New sheet</button>
+      <details class="manage" id="manage">
+        <summary role="button" aria-haspopup="true">Manage</summary>
+        <div class="manage-body">
+          <button type="button" class="btn quiet" id="renameChart">Rename sheet</button>
+          <button type="button" class="btn quiet" id="dupChart">Duplicate sheet</button>
+          <button type="button" class="btn quiet danger" id="delChart">Delete sheet</button>
         </div>
-        
-        <div class="instructions">
-            <h3>How to Use This Template</h3>
-            <ol>
-                <li>Write your main goal in the center yellow cell</li>
-                <li>Identify 8 key focus areas in the gray cells surrounding the center</li>
-                <li>For each focus area, define 8 specific action steps in the white cells</li>
-                <li>Work through your 64 action steps systematically to achieve your goal</li>
-            </ol>
-        </div>
-        
-        <div class="main-grid" id="grid"></div>
-        
-        <div class="stats" id="stats">
-            <div class="stat-item">
-                <span class="stat-value" id="goalProgress">0%</span>
-                <span class="stat-label">Goal</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-value" id="focusProgress">0/8</span>
-                <span class="stat-label">Focus Areas</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-value" id="actionsProgress">0/64</span>
-                <span class="stat-label">Actions</span>
-            </div>
-        </div>
-        
-        <div style="text-align: center; margin: 20px 0; color: #7f8c8d; font-size: 13px;">
-            <div style="font-style: italic; margin-bottom: 8px;">Inspired by Takashi Harada</div>
-            <div style="font-size: 11px; color: #95a5a6; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 0 20px;">
-                This template implements the Harada Method for personal use. 
-                Commercial use is prohibited. See LICENSE for details.
-            </div>
-        </div>
-        
-        <div class="buttons">
-            <button onclick="window.print()">🖨️ Print Template</button>
-            <button class="tertiary" onclick="downloadPDF()">📄 Save as PDF</button>
-            <button onclick="exportData()" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);">💾 Export Data</button>
-            <button onclick="importData()" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);">📥 Import Data</button>
-            <button class="secondary" onclick="clearAll()">🗑️ Clear All</button>
-        </div>
+      </details>
+      <button type="button" class="btn quiet" id="themeBtn">Dark</button>
+      <button type="button" class="btn quiet" id="helpBtn" aria-label="Keyboard shortcuts and help">?</button>
     </div>
-    
-    <script>
-        const grid = document.getElementById('grid');
-        
-        // The 8 cells with black circles in the image - these are the Focus Areas
-        // Looking at the 9x9 grid (0-80), the circled cells are:
-        // Top-left section: cell 10, Top-middle: 13, Top-right: 16
-        // Middle-left: 37, Middle-right: 43
-        // Bottom-left: 64, Bottom-middle: 67, Bottom-right: 70
-        const focusAreaCells = [10, 13, 16, 37, 43, 64, 67, 70];
-        const centerCell = 40; // The yellow center cell
-        
-        // Create 81 cells
-        for (let i = 0; i < 81; i++) {
-            const cell = document.createElement('div');
-            cell.className = 'cell';
-            
-            // Add gray background to focus area cells
-            if (focusAreaCells.includes(i)) {
-                cell.classList.add('gray');
-            }
-            
-            // Add center yellow cell
-            if (i === centerCell) {
-                cell.classList.add('center');
-            }
-            
-            // Add textarea for editing
-            const textarea = document.createElement('textarea');
-            if (i === centerCell) {
-                textarea.placeholder = 'Your Main Goal';
-            } else if (focusAreaCells.includes(i)) {
-                textarea.placeholder = 'Focus Area';
-            } else {
-                textarea.placeholder = 'Action Step';
-            }
-            cell.appendChild(textarea);
-            
-            grid.appendChild(cell);
-        }
-        
-        function downloadPDF() {
-            window.print();
-        }
-        
-        function clearAll(event) {
-            if (confirm('Are you sure you want to clear all content? This action cannot be undone.')) {
-                const textareas = document.querySelectorAll('textarea');
-                textareas.forEach(ta => {
-                    ta.value = '';
-                });
-                
-                // Clear from localStorage
-                for (let i = 0; i < 81; i++) {
-                    localStorage.removeItem(`harada_cell_${i}`);
-                }
-                
-                updateProgress();
-                
-                // Show success feedback
-                if (event && event.target) {
-                    const btn = event.target;
-                    const originalText = btn.textContent;
-                    btn.textContent = '✓ Cleared!';
-                    btn.style.background = 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)';
-                    setTimeout(() => {
-                        btn.textContent = originalText;
-                        btn.style.background = '';
-                    }, 2000);
-                }
-            }
-        }
-        
-        // Export/Import functionality
-        function exportData() {
-            const textareas = document.querySelectorAll('textarea');
-            const data = {};
-            textareas.forEach((ta, index) => {
-                if (ta.value.trim()) {
-                    data[index] = ta.value;
-                }
-            });
-            
-            const json = JSON.stringify(data, null, 2);
-            const blob = new Blob([json], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `harada-method-${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-        
-        function importData() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'application/json';
-            input.onchange = (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        try {
-                            const textareas = document.querySelectorAll('textarea');
-                            const data = JSON.parse(event.target.result);
-                            Object.keys(data).forEach(index => {
-                                const idx = parseInt(index);
-                                if (idx >= 0 && idx < 81) {
-                                    textareas[idx].value = data[index];
-                                    localStorage.setItem(`harada_cell_${idx}`, data[index]);
-                                }
-                            });
-                            updateProgress();
-                            alert('✓ Data imported successfully!');
-                        } catch (error) {
-                            alert('Error importing data. Please check the file format.');
-                        }
-                    };
-                    reader.readAsText(file);
-                }
-            };
-            input.click();
-        }
-        
-        // Progress tracking function
-        function updateProgress() {
-            const textareas = document.querySelectorAll('textarea');
-            let goalFilled = false;
-            let focusFilled = 0;
-            let actionsFilled = 0;
-            
-            textareas.forEach((ta, index) => {
-                const value = ta.value.trim();
-                if (value) {
-                    if (index === centerCell) {
-                        goalFilled = true;
-                    } else if (focusAreaCells.includes(index)) {
-                        focusFilled++;
-                    } else {
-                        actionsFilled++;
-                    }
-                }
-            });
-            
-            document.getElementById('goalProgress').textContent = goalFilled ? '100%' : '0%';
-            document.getElementById('focusProgress').textContent = `${focusFilled}/8`;
-            document.getElementById('actionsProgress').textContent = `${actionsFilled}/64`;
-        }
-        
-        // Auto-save functionality with debouncing and progress tracking
-        const textareas = document.querySelectorAll('textarea');
-        textareas.forEach((ta, index) => {
-            // Load saved content
-            const saved = localStorage.getItem(`harada_cell_${index}`);
-            if (saved) ta.value = saved;
-            
-            // Save on input with debounce
-            let timeout;
-            ta.addEventListener('input', () => {
-                clearTimeout(timeout);
-                timeout = setTimeout(() => {
-                    localStorage.setItem(`harada_cell_${index}`, ta.value);
-                    updateProgress();
-                }, 500);
-                
-                // Update progress immediately for better UX
-                updateProgress();
-            });
+  </div>
+
+  <h1>One goal. Eight focus areas. Sixty&#8209;four actions.</h1>
+  <p class="subtitle">Takashi Harada's chart turns a single goal into the sixty-four things that actually get you there. Write the goal in the middle, name eight focus areas around it, then fill in eight actions for each. Stamp an action when it's done.</p>
+
+  <div class="formblock">
+    <div class="field">
+      <label for="goalLine">Goal</label>
+      <input id="goalLine" type="text" autocomplete="off" spellcheck="true" placeholder="The one thing this sheet is for">
+    </div>
+    <div class="field">
+      <label for="deadline">By when</label>
+      <input id="deadline" type="text" autocomplete="off" placeholder="e.g. 31 Mar 2027">
+    </div>
+  </div>
+
+  <div class="gauge-wrap">
+    <div class="gauge" id="gauge" role="img" aria-label="Progress across the sixty-four actions"></div>
+    <p class="readout" id="readout"></p>
+  </div>
+
+  <div class="print-head">
+    <span class="pg" id="printGoal"></span>
+    <span class="pm" id="printMeta"></span>
+  </div>
+
+  <div class="viewbar">
+    <span class="note" id="viewNote"></span>
+    <div class="seg" role="group" aria-label="Choose a view">
+      <button type="button" class="btn" id="viewSheet" aria-pressed="true">Sheet</button>
+      <button type="button" class="btn" id="viewList" aria-pressed="false">Checklist</button>
+    </div>
+  </div>
+
+  <section class="view" id="sheetView" aria-label="The 9 by 9 sheet">
+    <div class="gridscroll">
+      <div class="sheetgrid" id="grid"></div>
+    </div>
+    <p class="hint" id="sheetHint">Alt + arrow keys move between cells &nbsp;·&nbsp; Ctrl/⌘ + Enter stamps an action</p>
+  </section>
+
+  <section class="view" id="listView" aria-label="Checklist of all sixty-four actions" hidden></section>
+
+  <div class="toolbar">
+    <button type="button" class="btn" id="printBtn">Print / Save as PDF</button>
+    <button type="button" class="btn quiet" id="exportBtn">Export JSON</button>
+    <button type="button" class="btn quiet" id="importBtn">Import JSON</button>
+    <button type="button" class="btn quiet" id="mdBtn">Copy as Markdown</button>
+    <button type="button" class="btn quiet" id="shareBtn">Copy share link</button>
+    <span class="spacer"></span>
+    <button type="button" class="btn quiet danger" id="clearBtn">Clear sheet</button>
+  </div>
+
+  <p class="colophon">
+    The Harada Method was developed by the Japanese educator Takashi Harada. This worksheet is a tool for
+    practising it, not a work of his &mdash; see <a href="LICENSE">LICENSE</a> for the non-commercial terms.
+    Everything you type stays in this browser: no account, no server, no analytics.
+  </p>
+</div>
+
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
+<dialog id="helpDlg">
+  <div class="dlg-head"><h2>Working the sheet</h2></div>
+  <div class="dlg-body">
+    <dl>
+      <dt><kbd>Alt</kbd> + <kbd>↑ ↓ ← →</kbd></dt><dd>Move to the next cell in that direction.</dd>
+      <dt><kbd>↑ ↓ ← →</kbd></dt><dd>Move the cursor in the text; jumps cells once the cursor is at the end.</dd>
+      <dt><kbd>Ctrl/⌘</kbd> + <kbd>Enter</kbd></dt><dd>Stamp the action in the current cell as done, or un-stamp it.</dd>
+      <dt><kbd>Tab</kbd></dt><dd>Next cell, in reading order.</dd>
+      <dt><kbd>Esc</kbd></dt><dd>Leave the cell you're editing.</dd>
+      <dt><kbd>?</kbd></dt><dd>Open this panel.</dd>
+    </dl>
+    <p style="margin-top:14px;font-size:13.5px;color:var(--ink-soft)">
+      A focus area is written once in the middle block and once more as the centre of its own block &mdash; type in
+      either and both update. The eight cells around that centre are its actions.
+    </p>
+    <p style="margin-top:10px;font-size:13.5px;color:var(--ink-soft)">
+      The Checklist view lists all sixty-four actions as ordinary checkboxes, which is the easier way through them
+      with a keyboard or a screen reader.
+    </p>
+  </div>
+  <div class="dlg-foot"><button type="button" class="btn" data-close>Close</button></div>
+</dialog>
+
+<dialog id="askDlg">
+  <form method="dialog">
+    <div class="dlg-head"><h2 id="askTitle">Name</h2></div>
+    <div class="dlg-body">
+      <div class="field">
+        <label for="askInput" id="askLabel">Name</label>
+        <input id="askInput" type="text" autocomplete="off">
+      </div>
+    </div>
+    <div class="dlg-foot">
+      <button type="button" class="btn quiet" id="askCancel">Cancel</button>
+      <button type="submit" class="btn" id="askOk" value="ok">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Pure logic, no DOM. tests/core.test.mjs evaluates this exact block in a Node vm. -->
+<script id="harada-core">
+"use strict";
+var HaradaCore = (function () {
+  var SCHEMA = 2;
+  var FOCUS_N = 8, ACTION_N = 8, TOTAL = FOCUS_N * ACTION_N;
+
+  /* ── Layout of the 9×9 sheet ───────────────────────────────────────────
+     A Mandal chart writes each focus area twice: once in the ring around
+     the centre block, and once as the centre of its own outer block. The
+     eight cells around that outer centre are its actions.
+     1 goal + 8 ring + 8 outer centres + 64 actions = 81 cells exactly. */
+  function buildLayout() {
+    var at = function (r, c) { return r * 9 + c; };
+    var goal = at(4, 4);
+    var ring = [], outer = [], actions = [];
+    [0, 1, 2, 3, 5, 6, 7, 8].forEach(function (b) {
+      var R = Math.floor(b / 3), C = b % 3, r0 = 3 * R, c0 = 3 * C;
+      outer.push(at(r0 + 1, c0 + 1));
+      ring.push(at(3 + R, 3 + C));
+      var a = [];
+      for (var dr = 0; dr < 3; dr++)
+        for (var dc = 0; dc < 3; dc++)
+          if (!(dr === 1 && dc === 1)) a.push(at(r0 + dr, c0 + dc));
+      actions.push(a);
+    });
+    return { goal: goal, focusRing: ring, focusOuter: outer, actions: actions };
+  }
+  var LAYOUT = buildLayout();
+
+  /** Role and address of every one of the 81 cells, by grid index. */
+  function cellMap() {
+    var m = new Array(81);
+    m[LAYOUT.goal] = { role: "goal" };
+    LAYOUT.focusRing.forEach(function (i, f) { m[i] = { role: "focus-ring", focus: f }; });
+    LAYOUT.focusOuter.forEach(function (i, f) { m[i] = { role: "focus-outer", focus: f }; });
+    LAYOUT.actions.forEach(function (row, f) {
+      row.forEach(function (i, a) { m[i] = { role: "action", focus: f, action: a }; });
+    });
+    return m;
+  }
+
+  /* ── State ─────────────────────────────────────────────────────────── */
+  function grid(fill) {
+    var out = [];
+    for (var f = 0; f < FOCUS_N; f++) {
+      var row = [];
+      for (var a = 0; a < ACTION_N; a++) row.push(fill);
+      out.push(row);
+    }
+    return out;
+  }
+
+  function newId(rand) {
+    rand = rand || Math.random;
+    var s = "";
+    for (var i = 0; i < 8; i++) s += Math.floor(rand() * 36).toString(36);
+    return s;
+  }
+
+  function emptyChart(name, now, rand) {
+    now = now || Date.now();
+    return {
+      id: newId(rand), name: name || "Untitled sheet",
+      goal: "", deadline: "",
+      focus: new Array(FOCUS_N).fill(""),
+      actions: grid(""), done: grid(false),
+      createdAt: now, updatedAt: now
+    };
+  }
+
+  function emptyState(now, rand) {
+    var c = emptyChart("My first sheet", now, rand);
+    return { version: SCHEMA, charts: [c], activeId: c.id };
+  }
+
+  var str = function (v) { return typeof v === "string" ? v : v == null ? "" : String(v); };
+
+  /** Force any chart-shaped object into a complete, correctly sized chart. */
+  function normaliseChart(raw, now, rand) {
+    var base = emptyChart("Untitled sheet", now, rand);
+    if (!raw || typeof raw !== "object") return base;
+    base.id = str(raw.id) || base.id;
+    base.name = str(raw.name).trim() || "Untitled sheet";
+    base.goal = str(raw.goal);
+    base.deadline = str(raw.deadline);
+    base.createdAt = typeof raw.createdAt === "number" ? raw.createdAt : base.createdAt;
+    base.updatedAt = typeof raw.updatedAt === "number" ? raw.updatedAt : base.updatedAt;
+    for (var f = 0; f < FOCUS_N; f++) {
+      base.focus[f] = str(Array.isArray(raw.focus) ? raw.focus[f] : "");
+      for (var a = 0; a < ACTION_N; a++) {
+        var row = Array.isArray(raw.actions) ? raw.actions[f] : null;
+        base.actions[f][a] = str(Array.isArray(row) ? row[a] : "");
+        var drow = Array.isArray(raw.done) ? raw.done[f] : null;
+        base.done[f][a] = Array.isArray(drow) ? drow[a] === true : false;
+      }
+    }
+    return base;
+  }
+
+  /** v1 stored one flat map of grid index → text, with no done state. */
+  function fromV1Cells(cells, now, rand) {
+    var c = emptyChart("Imported sheet", now, rand);
+    var get = function (i) {
+      var v = cells[i] != null ? cells[i] : cells[String(i)];
+      return str(v).trim() ? str(v) : "";
+    };
+    c.goal = get(LAYOUT.goal);
+    LAYOUT.focusOuter.forEach(function (idx, f) {
+      // v1 left the ring cells editable, so fall back to whichever holds text
+      c.focus[f] = get(idx) || get(LAYOUT.focusRing[f]);
+    });
+    LAYOUT.actions.forEach(function (row, f) {
+      row.forEach(function (idx, a) { c.actions[f][a] = get(idx); });
+    });
+    return c;
+  }
+
+  /** Accepts v1 flat maps, bare charts, or v2 state. Always returns v2 state. */
+  function migrate(raw, now, rand) {
+    if (!raw || typeof raw !== "object") return emptyState(now, rand);
+
+    if (Array.isArray(raw.charts) && raw.charts.length) {
+      var charts = raw.charts.map(function (c) { return normaliseChart(c, now, rand); });
+      var activeId = charts.some(function (c) { return c.id === raw.activeId; })
+        ? raw.activeId : charts[0].id;
+      return { version: SCHEMA, charts: charts, activeId: activeId };
+    }
+
+    if ("goal" in raw || "actions" in raw || "focus" in raw) {
+      var one = normaliseChart(raw, now, rand);
+      return { version: SCHEMA, charts: [one], activeId: one.id };
+    }
+
+    var looksV1 = Object.keys(raw).some(function (k) { return /^\d+$/.test(k) && +k >= 0 && +k < 81; });
+    if (looksV1) {
+      var c = fromV1Cells(raw, now, rand);
+      return { version: SCHEMA, charts: [c], activeId: c.id };
+    }
+    return emptyState(now, rand);
+  }
+
+  /* ── Progress ──────────────────────────────────────────────────────── */
+  function progress(chart) {
+    var c = normaliseChart(chart);
+    var filled = 0, done = 0, focusFilled = 0, perFocus = [];
+    for (var f = 0; f < FOCUS_N; f++) {
+      if (c.focus[f].trim()) focusFilled++;
+      var pf = { filled: 0, done: 0 };
+      for (var a = 0; a < ACTION_N; a++) {
+        var has = c.actions[f][a].trim() !== "";
+        if (has) { pf.filled++; filled++; }
+        if (c.done[f][a]) { pf.done++; done++; }
+      }
+      pf.complete = pf.done === ACTION_N;
+      perFocus.push(pf);
+    }
+    return {
+      goalSet: c.goal.trim() !== "",
+      focusFilled: focusFilled,
+      actionsFilled: filled,
+      actionsDone: done,
+      actionsTotal: TOTAL,
+      pct: Math.round((done / TOTAL) * 100),
+      perFocus: perFocus
+    };
+  }
+
+  /* ── Markdown ──────────────────────────────────────────────────────── */
+  function toMarkdown(chart) {
+    var c = normaliseChart(chart);
+    var p = progress(c);
+    var L = [];
+    L.push("# " + (c.goal.trim() || "Untitled goal"));
+    var meta = [];
+    if (c.deadline.trim()) meta.push("By " + c.deadline.trim());
+    meta.push(p.actionsDone + "/" + TOTAL + " actions done");
+    L.push("");
+    L.push("*" + meta.join(" · ") + "*");
+    for (var f = 0; f < FOCUS_N; f++) {
+      L.push("");
+      L.push("## " + (f + 1) + ". " + (c.focus[f].trim() || "Unnamed focus area") +
+        "  (" + p.perFocus[f].done + "/" + ACTION_N + ")");
+      for (var a = 0; a < ACTION_N; a++) {
+        var t = c.actions[f][a].trim();
+        if (!t) continue;
+        L.push("- [" + (c.done[f][a] ? "x" : " ") + "] " + t.replace(/\s*\n\s*/g, " "));
+      }
+    }
+    return L.join("\n") + "\n";
+  }
+
+  /* ── Share codec: compact tuple → base64url, portable to Node ─────── */
+  var B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+
+  function bytesToB64url(bytes) {
+    var out = "";
+    for (var i = 0; i < bytes.length; i += 3) {
+      var b0 = bytes[i], b1 = bytes[i + 1], b2 = bytes[i + 2];
+      out += B64[b0 >> 2];
+      out += B64[((b0 & 3) << 4) | ((b1 === undefined ? 0 : b1) >> 4)];
+      if (b1 === undefined) break;
+      out += B64[((b1 & 15) << 2) | ((b2 === undefined ? 0 : b2) >> 6)];
+      if (b2 === undefined) break;
+      out += B64[b2 & 63];
+    }
+    return out;
+  }
+
+  function b64urlToBytes(s) {
+    var inv = {}, i;
+    for (i = 0; i < 64; i++) inv[B64[i]] = i;
+    var clean = String(s).replace(/[^A-Za-z0-9\-_]/g, ""), out = [];
+    for (i = 0; i < clean.length; i += 4) {
+      var c0 = inv[clean[i]], c1 = inv[clean[i + 1]], c2 = inv[clean[i + 2]], c3 = inv[clean[i + 3]];
+      var n0 = c0 === undefined ? 0 : c0, n1 = c1 === undefined ? 0 : c1;
+      var n2 = c2 === undefined ? 0 : c2, n3 = c3 === undefined ? 0 : c3;
+      if (c1 === undefined) break;
+      out.push((n0 << 2) | (n1 >> 4));
+      if (c2 === undefined) break;
+      out.push(((n1 & 15) << 4) | (n2 >> 2));
+      if (c3 === undefined) break;
+      out.push(((n2 & 3) << 6) | n3);
+    }
+    return new Uint8Array(out);
+  }
+
+  function encodeShare(chart) {
+    var c = normaliseChart(chart);
+    var flatActions = [], bits = "";
+    for (var f = 0; f < FOCUS_N; f++)
+      for (var a = 0; a < ACTION_N; a++) {
+        flatActions.push(c.actions[f][a]);
+        bits += c.done[f][a] ? "1" : "0";
+      }
+    var tuple = [SCHEMA, c.name, c.goal, c.deadline, c.focus, flatActions, bits];
+    return bytesToB64url(new TextEncoder().encode(JSON.stringify(tuple)));
+  }
+
+  function decodeShare(token, now, rand) {
+    var t;
+    try {
+      t = JSON.parse(new TextDecoder().decode(b64urlToBytes(token)));
+    } catch (e) { return null; }
+    if (!Array.isArray(t) || t.length < 7 || t[0] !== SCHEMA) return null;
+    var c = emptyChart(str(t[1]) || "Shared sheet", now, rand);
+    c.goal = str(t[2]); c.deadline = str(t[3]);
+    for (var f = 0; f < FOCUS_N; f++) {
+      c.focus[f] = str(Array.isArray(t[4]) ? t[4][f] : "");
+      for (var a = 0; a < ACTION_N; a++) {
+        var k = f * ACTION_N + a;
+        c.actions[f][a] = str(Array.isArray(t[5]) ? t[5][k] : "");
+        c.done[f][a] = str(t[6])[k] === "1";
+      }
+    }
+    return c;
+  }
+
+  return {
+    SCHEMA: SCHEMA, FOCUS_N: FOCUS_N, ACTION_N: ACTION_N, TOTAL: TOTAL,
+    LAYOUT: LAYOUT, buildLayout: buildLayout, cellMap: cellMap,
+    newId: newId, emptyChart: emptyChart, emptyState: emptyState,
+    normaliseChart: normaliseChart, fromV1Cells: fromV1Cells, migrate: migrate,
+    progress: progress, toMarkdown: toMarkdown,
+    encodeShare: encodeShare, decodeShare: decodeShare,
+    bytesToB64url: bytesToB64url, b64urlToBytes: b64urlToBytes
+  };
+})();
+if (typeof globalThis !== "undefined") globalThis.HaradaCore = HaradaCore;
+</script>
+
+<script>
+(function () {
+  "use strict";
+  var C = HaradaCore, MAP = C.cellMap();
+  var KEY = "harada.state.v2", KEY_THEME = "harada.theme", KEY_VIEW = "harada.view", KEY_MIG = "harada.migrated.v1";
+  var $ = function (id) { return document.getElementById(id); };
+
+  var SEAL = '<svg class="seal" viewBox="0 0 24 24" aria-hidden="true">' +
+    '<circle cx="12" cy="12" r="10.1" fill="none" stroke="currentColor" stroke-width="2.1"/>' +
+    '<path d="M7.3 12.5l3.3 3.4 6.4-7.5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square"/></svg>';
+
+  /* ── storage ───────────────────────────────────────────────────────── */
+  function readStore() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (raw) return C.migrate(JSON.parse(raw));
+    } catch (e) { /* unreadable or blocked: start clean */ }
+    return null;
+  }
+
+  /** One-time lift of v1's 81 loose `harada_cell_N` keys into a real chart. */
+  function readLegacy() {
+    try {
+      if (localStorage.getItem(KEY_MIG)) return null;
+      var cells = {}, found = false;
+      for (var i = 0; i < 81; i++) {
+        var v = localStorage.getItem("harada_cell_" + i);
+        if (v && v.trim()) { cells[i] = v; found = true; }
+      }
+      if (!found) return null;
+      var st = C.migrate(cells);
+      st.charts[0].name = "Recovered sheet";
+      return st;
+    } catch (e) { return null; }
+  }
+
+  var state = readStore();
+  var legacyLifted = false;
+  if (!state) {
+    var legacy = readLegacy();
+    if (legacy) { state = legacy; legacyLifted = true; }
+  }
+  if (!state) state = C.emptyState();
+
+  var saveTimer = null, storageWarned = false;
+  function persist() {
+    try {
+      localStorage.setItem(KEY, JSON.stringify(state));
+      if (legacyLifted) localStorage.setItem(KEY_MIG, "1");
+      if (typeof narrow !== "undefined" && narrow) noteView(!$("sheetView").hidden);
+    } catch (e) {
+      if (storageWarned) return;          // once is a warning, every save is noise
+      storageWarned = true;
+      toast("This browser won't let the page save. Export the sheet to keep it.", "OK", function () { });
+    }
+  }
+  function queueSave() {
+    active().updatedAt = Date.now();
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(persist, 400);
+  }
+  addEventListener("pagehide", persist);
+  document.addEventListener("visibilitychange", function () { if (document.hidden) persist(); });
+
+  function active() {
+    var c = state.charts.filter(function (x) { return x.id === state.activeId; })[0];
+    if (!c) { c = state.charts[0]; state.activeId = c.id; }
+    return c;
+  }
+
+  /* ── toasts ────────────────────────────────────────────────────────── */
+  function toast(msg, actionLabel, onAction, ms) {
+    var el = document.createElement("div");
+    el.className = "toast";
+    var span = document.createElement("span");
+    span.textContent = msg;
+    el.appendChild(span);
+    var timer;
+    var close = function () { clearTimeout(timer); if (el.parentNode) el.remove(); };
+    if (actionLabel) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.textContent = actionLabel;
+      b.addEventListener("click", function () { close(); onAction(); });
+      el.appendChild(b);
+    }
+    $("toasts").appendChild(el);
+    timer = setTimeout(close, ms || (actionLabel ? 9000 : 3600));
+    return close;
+  }
+
+  /* ── a dialog that asks for one line of text ───────────────────────── */
+  function ask(title, label, value) {
+    return new Promise(function (resolve) {
+      var dlg = $("askDlg"), form = dlg.querySelector("form");
+      var input = $("askInput"), cancel = $("askCancel");
+      if (dlg.open) dlg.close();          // settles any question still on screen
+      $("askTitle").textContent = title;
+      $("askLabel").textContent = label;
+      input.value = value || "";
+
+      // Not all engines fire `close` on a dialog-method form submit, so the
+      // submit and cancel paths each resolve on their own.
+      var settled = false;
+      function finish(v) {
+        if (settled) return;
+        settled = true;
+        form.removeEventListener("submit", onSubmit);
+        cancel.removeEventListener("click", onCancelClick);
+        dlg.removeEventListener("cancel", onEsc);
+        dlg.removeEventListener("close", onClose);
+        if (dlg.open) dlg.close();
+        resolve(v);
+      }
+      function onSubmit(e) { e.preventDefault(); finish(input.value.trim()); }
+      function onCancelClick() { finish(null); }
+      function onEsc() { finish(null); }
+      function onClose() { finish(dlg.returnValue === "ok" ? input.value.trim() : null); }
+
+      form.addEventListener("submit", onSubmit);
+      cancel.addEventListener("click", onCancelClick);
+      dlg.addEventListener("cancel", onEsc);
+      dlg.addEventListener("close", onClose);
+
+      dlg.showModal();
+      input.focus();
+      input.select();
+    });
+  }
+
+  /* ── build the 9×9 sheet ───────────────────────────────────────────── */
+  var cells = [];
+  (function buildGrid() {
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < 81; i++) {
+      var info = MAP[i], cell = document.createElement("div");
+      cell.className = "cell";
+      cell.dataset.r = Math.floor(i / 9) + 1;
+      cell.dataset.c = (i % 9) + 1;
+      cell.dataset.role = info.role;
+
+      if (info.role !== "action") {
+        var coord = document.createElement("span");
+        coord.className = "coord";
+        coord.textContent = info.role === "goal" ? "GOAL" : ("0" + (info.focus + 1));
+        cell.appendChild(coord);
+      }
+
+      var ta = document.createElement("textarea");
+      ta.rows = 1;
+      ta.spellcheck = true;
+      ta.placeholder = info.role === "goal" ? "Your goal"
+        : info.role === "action" ? "Action" : "Focus area";
+      ta.dataset.i = i;
+      cell.appendChild(ta);
+
+      if (info.role === "focus-outer") {
+        var tally = document.createElement("span");
+        tally.className = "tally";
+        cell.appendChild(tally);
+      }
+
+      if (info.role === "action") {
+        var box = document.createElement("input");
+        box.type = "checkbox";
+        box.className = "seal-toggle";
+        box.tabIndex = -1;        // Tab walks the cells; Ctrl/Cmd+Enter stamps
+        box.dataset.i = i;
+        cell.appendChild(box);
+        cell.insertAdjacentHTML("beforeend", SEAL);
+      }
+
+      frag.appendChild(cell);
+      cells.push({ el: cell, ta: ta, info: info });
+    }
+    $("grid").appendChild(frag);
+  })();
+
+  /* ── build the checklist once, then update it in place ─────────────── */
+  var slips = [];
+  (function buildChecklist() {
+    var wrap = document.createElement("div");
+    wrap.className = "checklist";
+
+    var g = document.createElement("div");
+    g.className = "slip-goal";
+    g.innerHTML = '<span class="n">Goal</span><p class="g" id="clGoal"></p><p class="by" id="clBy"></p>';
+    wrap.appendChild(g);
+
+    for (var f = 0; f < C.FOCUS_N; f++) {
+      var slip = document.createElement("section");
+      slip.className = "slip";
+      var head = document.createElement("div");
+      head.className = "slip-head";
+      head.innerHTML = '<span class="n">' + ("0" + (f + 1)) + '</span><h2 class="nm"></h2><span class="ct"></span>';
+      slip.appendChild(head);
+      var ol = document.createElement("ol");
+      var rows = [];
+      for (var a = 0; a < C.ACTION_N; a++) {
+        var li = document.createElement("li");
+        var id = "cl-" + f + "-" + a;
+        li.innerHTML = '<span class="box"><input type="checkbox" id="' + id + '" data-f="' + f + '" data-a="' + a + '">' +
+          SEAL + '</span><label class="txt" for="' + id + '"></label>';
+        ol.appendChild(li);
+        rows.push({ li: li, box: li.querySelector("input"), txt: li.querySelector(".txt") });
+      }
+      slip.appendChild(ol);
+      wrap.appendChild(slip);
+      slips.push({ el: slip, name: head.querySelector(".nm"), count: head.querySelector(".ct"), rows: rows });
+    }
+    $("listView").appendChild(wrap);
+  })();
+
+  /* ── the 64-tick gauge ─────────────────────────────────────────────── */
+  var ticks = [];
+  (function buildGauge() {
+    var frag = document.createDocumentFragment();
+    for (var k = 0; k < C.TOTAL; k++) {
+      var t = document.createElement("i");
+      frag.appendChild(t);
+      ticks.push(t);
+    }
+    $("gauge").appendChild(frag);
+  })();
+
+  /* ── rendering ─────────────────────────────────────────────────────── */
+  var cellBox = { w: 0, h: 0 };
+  function measureCells() {
+    cellBox.w = $("grid").clientWidth || 860;
+    cellBox.h = cells[0].el.clientHeight || 0;
+  }
+
+  function fit(ta, role) {
+    var scale = Math.max(0.72, Math.min(1, (cellBox.w || 860) / 860));
+    var n = ta.value.length, base = role === "action" ? 12 : 12.5;
+    if (n > 28) base -= 1;
+    if (n > 42) base -= 1;
+    if (n > 60) base -= 1;
+    if (n > 84) base -= 1;
+    if (role === "goal") base += 1;
+    ta.style.setProperty("--fs", (base * scale).toFixed(2) + "px");
+
+    // Height follows the text so it can sit in the middle of the cell. An
+    // empty cell needs no measuring, which keeps a full repaint cheap.
+    if (!n) { ta.style.height = ""; return; }
+    var room = cellBox.h - (role === "action" ? 6 : 16);
+    ta.style.height = "auto";
+    if (ta.parentNode.dataset.editing === "1") ta.style.height = ta.scrollHeight + "px";
+    else if (room > 0) ta.style.height = Math.min(ta.scrollHeight, room) + "px";
+  }
+
+  function labelFor(info, chart) {
+    var fname = info.focus != null ? (chart.focus[info.focus].trim() || ("focus area " + (info.focus + 1))) : "";
+    if (info.role === "goal") return "Your goal";
+    if (info.role === "focus-ring") return "Focus area " + (info.focus + 1) + " (centre block)";
+    if (info.role === "focus-outer") return "Focus area " + (info.focus + 1) + " (its own block)";
+    return "Action " + (info.action + 1) + " of 8 for " + fname;
+  }
+
+  function renderCells() {
+    var c = active();
+    cells.forEach(function (x) {
+      var i = x.info, v;
+      if (i.role === "goal") v = c.goal;
+      else if (i.role === "action") v = c.actions[i.focus][i.action];
+      else v = c.focus[i.focus];
+      if (x.ta.value !== v) x.ta.value = v;
+      x.ta.setAttribute("aria-label", labelFor(i, c));
+      if (i.role === "action") {
+        var d = c.done[i.focus][i.action];
+        x.el.dataset.done = d ? "1" : "0";
+        var box = x.el.querySelector(".seal-toggle");
+        box.checked = d;
+        box.setAttribute("aria-label", (d ? "Un-stamp: " : "Stamp as done: ") + labelFor(i, c));
+      }
+      fit(x.ta, i.role);
+    });
+  }
+
+  function renderProgress() {
+    var c = active(), p = C.progress(c);
+
+    cells.forEach(function (x) {
+      if (x.info.role !== "focus-outer") return;
+      var pf = p.perFocus[x.info.focus];
+      var t = x.el.querySelector(".tally");
+      t.textContent = pf.done + "/" + C.ACTION_N;
+      t.dataset.complete = pf.complete ? "1" : "0";
+      x.el.dataset.complete = pf.complete ? "1" : "0";
+    });
+
+    for (var f = 0; f < C.FOCUS_N; f++)
+      for (var a = 0; a < C.ACTION_N; a++) {
+        var k = f * C.ACTION_N + a;
+        ticks[k].dataset.state = c.done[f][a] ? "done" : (c.actions[f][a].trim() ? "filled" : "empty");
+      }
+
+    $("readout").innerHTML =
+      '<b class="sealnum">' + p.actionsDone + "</b>/" + C.TOTAL + " stamped &nbsp;·&nbsp; " +
+      "<b>" + p.actionsFilled + "</b>/" + C.TOTAL + " written &nbsp;·&nbsp; " +
+      "<b>" + p.focusFilled + "</b>/8 focus areas" + (p.goalSet ? "" : " &nbsp;·&nbsp; no goal yet");
+    $("gauge").setAttribute("aria-label",
+      p.actionsDone + " of " + C.TOTAL + " actions stamped done, " + p.actionsFilled + " written in");
+
+    // Only worth repainting the checklist while it is on screen.
+    if (!$("listView").hidden) {
+      $("clGoal").textContent = c.goal.trim();
+      $("clBy").textContent = c.deadline.trim() ? "By " + c.deadline.trim() : "";
+      slips.forEach(function (s, f) {
+        s.name.textContent = c.focus[f].trim();
+        s.count.textContent = p.perFocus[f].done + "/" + C.ACTION_N;
+        s.count.dataset.complete = p.perFocus[f].complete ? "1" : "0";
+        s.rows.forEach(function (r, a) {
+          r.txt.textContent = c.actions[f][a].trim();
+          r.box.checked = c.done[f][a];
+          r.box.setAttribute("aria-label", "Action " + (a + 1) + " of focus area " + (f + 1));
         });
-        
-        // Initial progress update
-        updateProgress();
-        
-        // Keyboard navigation enhancement
-        textareas.forEach((ta, index) => {
-            ta.addEventListener('keydown', (e) => {
-                const currentRow = Math.floor(index / 9);
-                const currentCol = index % 9;
-                
-                // Arrow key navigation
-                if (e.key === 'ArrowUp' && currentRow > 0) {
-                    e.preventDefault();
-                    textareas[index - 9].focus();
-                } else if (e.key === 'ArrowDown' && currentRow < 8) {
-                    e.preventDefault();
-                    textareas[index + 9].focus();
-                } else if (e.key === 'ArrowLeft' && currentCol > 0) {
-                    e.preventDefault();
-                    textareas[index - 1].focus();
-                } else if (e.key === 'ArrowRight' && currentCol < 8) {
-                    e.preventDefault();
-                    textareas[index + 1].focus();
-                }
-                
-                // Tab navigation (shift+tab goes backwards)
-                if (e.key === 'Tab' && !e.shiftKey && index < 80) {
-                    // Allow default tab behavior but update progress
-                    setTimeout(updateProgress, 10);
-                }
-            });
+      });
+    }
+
+    $("printGoal").textContent = c.goal.trim() || c.name;
+    $("printMeta").textContent =
+      (c.deadline.trim() ? "By " + c.deadline.trim() + "  ·  " : "") +
+      p.actionsDone + "/" + C.TOTAL + " done  ·  printed " + new Date().toISOString().slice(0, 10);
+  }
+
+  function renderChartList() {
+    var sel = $("chartSel");
+    sel.innerHTML = "";
+    state.charts.forEach(function (c) {
+      var o = document.createElement("option");
+      o.value = c.id;
+      o.textContent = c.name;
+      if (c.id === state.activeId) o.selected = true;
+      sel.appendChild(o);
+    });
+  }
+
+  function renderAll() {
+    measureCells();
+    $("goalLine").value = active().goal;
+    $("deadline").value = active().deadline;
+    renderCells();
+    renderProgress();
+    renderChartList();
+  }
+
+  /* ── focus-area mirroring: two cells, one field ────────────────────── */
+  var focusCells = [];
+  for (var f0 = 0; f0 < C.FOCUS_N; f0++) focusCells.push([]);
+  cells.forEach(function (x) {
+    if (x.info.role === "focus-ring" || x.info.role === "focus-outer") focusCells[x.info.focus].push(x);
+  });
+
+  function relabelActions(f) {
+    var c = active();
+    cells.forEach(function (x) {
+      if (x.info.role === "action" && x.info.focus === f) x.ta.setAttribute("aria-label", labelFor(x.info, c));
+    });
+  }
+
+  /* ── editing ───────────────────────────────────────────────────────── */
+  cells.forEach(function (x) {
+    x.ta.addEventListener("input", function () {
+      var c = active(), i = x.info;
+      if (i.role === "goal") { c.goal = x.ta.value; $("goalLine").value = x.ta.value; }
+      else if (i.role === "action") { c.actions[i.focus][i.action] = x.ta.value; }
+      else {
+        c.focus[i.focus] = x.ta.value;
+        focusCells[i.focus].forEach(function (twin) {
+          if (twin !== x && twin.ta.value !== x.ta.value) { twin.ta.value = x.ta.value; fit(twin.ta, twin.info.role); }
         });
-        
-        // Add keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            // Ctrl/Cmd + P for print
-            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
-                e.preventDefault();
-                window.print();
-            }
+        relabelActions(i.focus);
+      }
+      fit(x.ta, i.role);
+      renderProgress();
+      queueSave();
+    });
+
+    // While a cell has the caret it is allowed to grow past its borders,
+    // so long text stays readable instead of being cut off.
+    x.ta.addEventListener("focus", function () {
+      x.el.dataset.editing = "1";
+      fit(x.ta, x.info.role);
+    });
+    x.ta.addEventListener("blur", function () {
+      delete x.el.dataset.editing;
+      fit(x.ta, x.info.role);
+    });
+  });
+
+  $("goalLine").addEventListener("input", function () {
+    var c = active();
+    c.goal = this.value;
+    var g = cells[C.LAYOUT.goal];
+    g.ta.value = this.value;
+    fit(g.ta, "goal");
+    renderProgress();
+    queueSave();
+  });
+  $("deadline").addEventListener("input", function () {
+    active().deadline = this.value;
+    renderProgress();
+    queueSave();
+  });
+
+  /* ── stamping an action done ───────────────────────────────────────── */
+  function setDone(f, a, val, animate) {
+    var c = active();
+    c.done[f][a] = val;
+    var cell = cells[C.LAYOUT.actions[f][a]];
+    if (animate && val) {
+      var s = cell.el.querySelector(".seal");
+      s.classList.remove("stamping");
+      void s.offsetWidth;
+      s.classList.add("stamping");
+    }
+    paintAction(f, a);
+    renderProgress();
+    queueSave();
+  }
+
+  /** Repaint just the one action that changed, in both views. */
+  function paintAction(f, a) {
+    var c = active(), x = cells[C.LAYOUT.actions[f][a]], d = c.done[f][a];
+    x.el.dataset.done = d ? "1" : "0";
+    var box = x.el.querySelector(".seal-toggle");
+    box.checked = d;
+    box.setAttribute("aria-label", (d ? "Un-stamp: " : "Stamp as done: ") + labelFor(x.info, c));
+    slips[f].rows[a].box.checked = d;
+  }
+
+  $("grid").addEventListener("mousedown", function (e) {
+    if (e.target.tagName === "TEXTAREA" || e.target.closest(".seal-toggle")) return;
+    var cell = e.target.closest(".cell");
+    if (!cell) return;
+    e.preventDefault();
+    var ta = cell.querySelector("textarea");
+    ta.focus();
+    ta.setSelectionRange(ta.value.length, ta.value.length);
+  });
+
+  $("grid").addEventListener("change", function (e) {
+    var box = e.target.closest(".seal-toggle");
+    if (!box) return;
+    var info = MAP[+box.dataset.i];
+    setDone(info.focus, info.action, box.checked, true);
+  });
+
+  $("listView").addEventListener("change", function (e) {
+    var box = e.target;
+    if (box.type !== "checkbox") return;
+    setDone(+box.dataset.f, +box.dataset.a, box.checked, false);
+  });
+
+  /* ── keyboard ──────────────────────────────────────────────────────── */
+  function moveTo(i) {
+    if (i < 0 || i > 80) return;
+    cells[i].ta.focus();
+    var v = cells[i].ta.value.length;
+    cells[i].ta.setSelectionRange(v, v);
+  }
+
+  cells.forEach(function (x, i) {
+    x.ta.addEventListener("keydown", function (e) {
+      var row = Math.floor(i / 9), col = i % 9;
+      var step = { ArrowUp: row > 0 ? i - 9 : -1, ArrowDown: row < 8 ? i + 9 : -1,
+                   ArrowLeft: col > 0 ? i - 1 : -1, ArrowRight: col < 8 ? i + 1 : -1 };
+
+      if (e.key === "Escape") { x.ta.blur(); return; }
+
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+        if (x.info.role === "action") {
+          e.preventDefault();
+          setDone(x.info.focus, x.info.action, !active().done[x.info.focus][x.info.action], true);
+        }
+        return;
+      }
+
+      if (!(e.key in step)) return;
+
+      if (e.altKey) { e.preventDefault(); moveTo(step[e.key]); return; }
+      if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+
+      // Plain arrows move the caret first, and only leave the cell at the edge.
+      var s = x.ta.selectionStart, end = x.ta.value.length, collapsed = s === x.ta.selectionEnd;
+      var atEdge =
+        (e.key === "ArrowLeft" || e.key === "ArrowUp") ? collapsed && s === 0 :
+        collapsed && s === end;
+      if (atEdge && step[e.key] >= 0) { e.preventDefault(); moveTo(step[e.key]); }
+    });
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "?" || e.metaKey || e.ctrlKey || e.altKey) return;
+    var t = e.target, tag = t && t.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || (t && t.isContentEditable)) return;
+    e.preventDefault();
+    $("helpDlg").showModal();
+  });
+
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-close]");
+    if (b) b.closest("dialog").close();
+  });
+  $("helpBtn").addEventListener("click", function () { $("helpDlg").showModal(); });
+
+  document.addEventListener("click", function (e) {
+    var m = $("manage");
+    if (m.open && !m.contains(e.target)) m.open = false;
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && $("manage").open) $("manage").open = false;
+  });
+
+  /* ── theme ─────────────────────────────────────────────────────────── */
+  function systemDark() { return matchMedia("(prefers-color-scheme: dark)").matches; }
+  function applyTheme(t) {
+    if (t) document.documentElement.setAttribute("data-theme", t);
+    else document.documentElement.removeAttribute("data-theme");
+    var dark = t ? t === "dark" : systemDark();
+    $("themeBtn").textContent = dark ? "Light" : "Dark";
+    $("themeBtn").setAttribute("aria-label", dark ? "Switch to the light sheet" : "Switch to the dark sheet");
+  }
+  var savedTheme = null;
+  try { savedTheme = localStorage.getItem(KEY_THEME); } catch (e) { }
+  applyTheme(savedTheme);
+  $("themeBtn").addEventListener("click", function () {
+    var now = document.documentElement.getAttribute("data-theme");
+    var next = (now ? now === "dark" : systemDark()) ? "light" : "dark";
+    applyTheme(next);
+    try { localStorage.setItem(KEY_THEME, next); } catch (e) { }
+  });
+
+  /* ── views ─────────────────────────────────────────────────────────── */
+  var narrow = matchMedia("(max-width: 720px)");
+  function setView(v) {
+    var sheet = v !== "list";
+    $("sheetView").hidden = !sheet;
+    $("listView").hidden = sheet;
+    $("viewSheet").setAttribute("aria-pressed", sheet ? "true" : "false");
+    $("viewList").setAttribute("aria-pressed", sheet ? "false" : "true");
+    try { localStorage.setItem(KEY_VIEW, v); } catch (e) { }
+    noteView(sheet);
+    if (sheet) refit(); else renderProgress();
+  }
+  function noteView(sheet) {
+    if (sheet && narrow.matches) { $("viewNote").textContent = "Swipe the sheet sideways to see every block"; return; }
+    var t = active().updatedAt;
+    $("viewNote").textContent = t ? "Saved " + new Date(t).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
+  }
+  $("viewSheet").addEventListener("click", function () { setView("sheet"); });
+  $("viewList").addEventListener("click", function () { setView("list"); });
+
+  function refit() { measureCells(); cells.forEach(function (x) { fit(x.ta, x.info.role); }); }
+  var rt = null;
+  addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { refit(); noteView(!$("sheetView").hidden); }, 120); });
+
+  /* ── sheets ────────────────────────────────────────────────────────── */
+  function switchTo(id) { state.activeId = id; renderAll(); noteView(!$("sheetView").hidden); persist(); }
+
+  $("chartSel").addEventListener("change", function () { switchTo(this.value); });
+
+  $("newChart").addEventListener("click", function () {
+    ask("New sheet", "What is this sheet for?", "").then(function (name) {
+      if (name === null) return;
+      var c = C.emptyChart(name || "Untitled sheet");
+      state.charts.push(c);
+      switchTo(c.id);
+      $("goalLine").focus();
+      toast("Added “" + c.name + "”.");
+    });
+  });
+
+  $("renameChart").addEventListener("click", function () {
+    $("manage").open = false;
+    ask("Rename sheet", "Sheet name", active().name).then(function (name) {
+      if (name === null || !name) return;
+      active().name = name;
+      renderChartList();
+      persist();
+      toast("Renamed to “" + name + "”.");
+    });
+  });
+
+  $("dupChart").addEventListener("click", function () {
+    $("manage").open = false;
+    var copy = C.normaliseChart(JSON.parse(JSON.stringify(active())));
+    copy.id = C.newId();
+    copy.name = active().name + " (copy)";
+    copy.createdAt = copy.updatedAt = Date.now();
+    state.charts.push(copy);
+    switchTo(copy.id);
+    toast("Duplicated as “" + copy.name + "”.");
+  });
+
+  $("delChart").addEventListener("click", function () {
+    $("manage").open = false;
+    var removed = active(), at = state.charts.indexOf(removed);
+    state.charts.splice(at, 1);
+    // Deleting the only sheet leaves a blank one behind; undo takes it away again.
+    var standIn = null;
+    if (!state.charts.length) {
+      standIn = C.emptyChart("My first sheet");
+      state.charts.push(standIn);
+    }
+    state.activeId = state.charts[Math.min(at, state.charts.length - 1)].id;
+    renderAll();
+    persist();
+    toast("Deleted “" + removed.name + "”.", "Undo", function () {
+      if (standIn) {
+        var i = state.charts.indexOf(standIn);
+        if (i !== -1) state.charts.splice(i, 1);
+      }
+      state.charts.splice(at, 0, removed);
+      switchTo(removed.id);
+      toast("“" + removed.name + "” is back.");
+    });
+  });
+
+  $("clearBtn").addEventListener("click", function () {
+    var before = JSON.parse(JSON.stringify(active())), at = state.charts.indexOf(active());
+    var fresh = C.emptyChart(before.name);
+    fresh.id = before.id;
+    fresh.createdAt = before.createdAt;
+    state.charts[at] = fresh;
+    renderAll();
+    persist();
+    toast("Cleared “" + before.name + "”.", "Undo", function () {
+      state.charts[at] = before;
+      renderAll();
+      persist();
+      toast("Restored “" + before.name + "”.");
+    });
+  });
+
+  /* ── taking the sheet elsewhere ────────────────────────────────────── */
+  function download(name, text, mime) {
+    var url = URL.createObjectURL(new Blob([text], { type: mime }));
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+  var stamp = function () { return new Date().toISOString().slice(0, 10); };
+  var slug = function (s) { return (s || "sheet").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "sheet"; };
+
+  $("printBtn").addEventListener("click", function () { window.print(); });
+
+  $("exportBtn").addEventListener("click", function () {
+    persist();
+    download("harada-" + stamp() + ".json", JSON.stringify(state, null, 2), "application/json");
+    toast(state.charts.length === 1 ? "Exported 1 sheet." : "Exported " + state.charts.length + " sheets.");
+  });
+
+  $("importBtn").addEventListener("click", function () {
+    var input = document.createElement("input");
+    input.type = "file";
+    input.accept = "application/json,.json";
+    input.addEventListener("change", function () {
+      var file = input.files && input.files[0];
+      if (!file) return;
+      var r = new FileReader();
+      r.onload = function () {
+        var incoming;
+        try { incoming = C.migrate(JSON.parse(String(r.result))); }
+        catch (e) { toast("That file isn't valid JSON, so nothing was imported."); return; }
+        if (!incoming.charts.length) { toast("No sheets found in that file."); return; }
+        var taken = state.charts.map(function (c) { return c.id; });
+        incoming.charts.forEach(function (c) {
+          if (taken.indexOf(c.id) !== -1) c.id = C.newId();
+          taken.push(c.id);
+          state.charts.push(c);
         });
-    </script>
+        switchTo(incoming.charts[0].id);
+        toast("Imported " + incoming.charts.length + (incoming.charts.length === 1 ? " sheet." : " sheets."));
+      };
+      r.readAsText(file);
+    });
+    input.click();
+  });
+
+  $("mdBtn").addEventListener("click", function () {
+    var md = C.toMarkdown(active()), name = "harada-" + slug(active().name) + "-" + stamp() + ".md";
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(md).then(
+        function () { toast("Markdown copied."); },
+        function () { download(name, md, "text/markdown"); toast("Clipboard was blocked, so the Markdown downloaded instead."); }
+      );
+    } else {
+      download(name, md, "text/markdown");
+      toast("Markdown downloaded.");
+    }
+  });
+
+  $("shareBtn").addEventListener("click", function () {
+    var link = location.origin + location.pathname + "#s=" + C.encodeShare(active());
+    if (link.length > 7800) {
+      toast("This sheet is too long for a link. Export JSON instead.");
+      return;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(link).then(
+        function () { toast("Share link copied. It carries the whole sheet — nothing is uploaded."); },
+        function () { ask("Share link", "Select and copy this link", link); }
+      );
+    } else {
+      ask("Share link", "Select and copy this link", link);
+    }
+  });
+
+  /* ── a sheet arriving by link ──────────────────────────────────────── */
+  (function readShareLink() {
+    var m = /[#&]s=([A-Za-z0-9\-_]+)/.exec(location.hash);
+    if (!m) return;
+    var c = C.decodeShare(m[1]);
+    history.replaceState(null, "", location.pathname + location.search);
+    if (!c) { toast("That share link couldn't be read."); return; }
+    c.name = c.name || "Shared sheet";
+    state.charts.push(c);
+    state.activeId = c.id;
+    persist();
+    setTimeout(function () { toast("Opened the shared sheet “" + c.name + "”. It's saved here now."); }, 300);
+  })();
+
+  /* ── go ────────────────────────────────────────────────────────────── */
+  var startView = "sheet";
+  try { startView = localStorage.getItem(KEY_VIEW) || "sheet"; } catch (e) { }
+  renderAll();
+  setView(startView);
+  persist();
+
+  if (legacyLifted) {
+    setTimeout(function () {
+      toast("Found a sheet from the old version and brought it across as “Recovered sheet”.", "OK", function () { });
+    }, 500);
+  }
+
+  if (location.protocol === "http:" || location.protocol === "https:") {
+    if ("serviceWorker" in navigator)
+      addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () { }); });
+  }
+})();
+</script>
 </body>
 </html>
