@@ -234,3 +234,192 @@ test("ids are 8 characters of base36 and differ", () => {
   assert.match(a, /^[0-9a-z]{8}$/);
   assert.notEqual(a, b);
 });
+
+/* ── the critique engine ──────────────────────────────────────────────── */
+
+const codes = (text, kind) => C.critique(text, kind).map((n) => n.code);
+
+test("a well-formed action draws no comment", () => {
+  for (const good of [
+    "Swim 1 km every Tuesday and Friday morning",
+    "After breakfast, read 10 pages",
+    "Call one customer each Monday at 9am",
+    "Every Sunday evening, plan the week's meals"
+  ]) {
+    assert.deepEqual(codes(good, "action"), [], `flagged: ${good}`);
+  }
+});
+
+test("a wish is not an action", () => {
+  assert.ok(codes("Be more confident", "action").includes("wish"));
+  assert.ok(codes("Become a better listener", "action").includes("wish"));
+  assert.ok(codes("Get fitter", "action").includes("wish"));
+});
+
+test("soft verbs are flagged, but only when they lead", () => {
+  assert.ok(codes("Work on my posture", "action").includes("soft"));
+  assert.ok(codes("Focus on nutrition", "action").includes("soft"));
+  // the same word later in a real action is fine
+  assert.ok(!codes("Every Monday, email the work in progress", "action").includes("soft"));
+});
+
+test("a comparative with no number has no finish line", () => {
+  assert.ok(codes("Run more each week", "action").includes("vague"));
+  assert.ok(!codes("Run 40 km more each week", "action").includes("vague"));
+});
+
+test("an action with no cue is flagged; one with a cue is not", () => {
+  assert.ok(codes("Stretch the hamstrings", "action").includes("nocue"));
+  assert.ok(!codes("Stretch the hamstrings every morning", "action").includes("nocue"));
+  assert.ok(!codes("After training, stretch the hamstrings", "action").includes("nocue"));
+});
+
+test("two actions in one cell are flagged, short phrases are not", () => {
+  assert.ok(codes("Every Monday, log the week's mileage and call the coach about it", "action").includes("compound"));
+  assert.ok(!codes("Salt and pepper daily", "action").includes("compound"), "too short to be two jobs");
+});
+
+test("goals are judged on a deadline and a way to settle them", () => {
+  assert.ok(codes("Get good at the piano", "goal").includes("nodeadline"));
+  assert.ok(!codes("Play a recital from memory by June 2027", "goal").includes("nodeadline"));
+  assert.ok(codes("Be happier at work", "goal").includes("nomeasure"));
+  assert.ok(!codes("Ship the app by March", "goal").includes("nomeasure"), "a settling verb counts");
+});
+
+test("the critique stays silent on empty text and on scripts it cannot read", () => {
+  assert.deepEqual(C.critique("", "action"), []);
+  assert.deepEqual(C.critique("   ", "action"), []);
+  assert.deepEqual(C.critique(null, "action"), []);
+  assert.deepEqual(C.critique("体づくり", "focus"), [], "no guessing at Japanese");
+  assert.deepEqual(C.critique("毎朝ストレッチをする", "action"), []);
+});
+
+test("every note carries a reason and a fix", () => {
+  for (const n of C.critique("Be more productive", "action")) {
+    assert.ok(n.label && n.why && n.fix, `note ${n.code} is missing its wording`);
+    assert.ok(n.why.length > 20 && n.fix.length > 20);
+  }
+});
+
+test("critiqueChart finds the written actions worth asking about", () => {
+  const c = C.emptyChart("x", NOW, FIXED);
+  c.goal = "Run a sub-3 marathon by October 2027";
+  c.actions[0][0] = "Long run every Sunday";          // fine
+  c.actions[0][1] = "Be more consistent";             // wish + no cue
+  c.actions[3][7] = "Work on sleep";                  // soft + no cue
+  const found = C.critiqueChart(c);
+  assert.equal(found.length, 2, "only the two weak ones");
+  assert.deepEqual(found.map((x) => [x.focus, x.action]), [[0, 1], [3, 7]]);
+  assert.ok(found[0].notes.some((n) => n.code === "wish"));
+  assert.equal(C.critiqueChart(C.emptyChart("e", NOW, FIXED)).length, 0, "an empty sheet is not nagged");
+});
+
+test("a goal that reads well is left alone by critiqueChart", () => {
+  const c = C.emptyChart("x", NOW, FIXED);
+  c.goal = "Publish the book by March 2028";
+  assert.equal(C.critiqueChart(c).filter((x) => x.where === "goal").length, 0);
+});
+
+test("draftGoal assembles the prompts into one line", () => {
+  assert.equal(
+    C.draftGoal({ want: "run a marathon", measure: "under 3 hours", by: "October 2027" }),
+    "Run a marathon — under 3 hours, by October 2027"
+  );
+  assert.equal(C.draftGoal({ want: "ship the app" }), "Ship the app");
+  assert.equal(C.draftGoal({}), "", "nothing to draft from nothing");
+  assert.equal(
+    C.draftGoal({ want: "run under 3 hours", measure: "under 3 hours", by: "2027" }),
+    "Run under 3 hours, by 2027",
+    "the measure is not repeated when it is already in the wish"
+  );
+});
+
+test("working notes survive a round trip and junk is rejected", () => {
+  const c = C.emptyChart("x", NOW, FIXED);
+  assert.deepEqual(c.notes, {}, "a new sheet starts with no notes");
+  c.notes.why = "because I keep saying next year";
+  c.notes.obstacle = "the first cold Tuesday";
+  const back = C.migrate({ version: 2, charts: [c], activeId: c.id }, NOW, FIXED).charts[0];
+  assert.deepEqual(back.notes, c.notes);
+
+  const dirty = C.normaliseChart({ notes: { ok: "keep", num: 5, nested: { a: 1 }, long: "x".repeat(9000) } }, NOW, FIXED);
+  assert.equal(dirty.notes.ok, "keep");
+  assert.equal("num" in dirty.notes, false, "non-strings are dropped");
+  assert.equal("nested" in dirty.notes, false);
+  assert.equal(dirty.notes.long.length, 4000, "capped");
+  assert.deepEqual(C.normaliseChart({ notes: ["nope"] }, NOW, FIXED).notes, {}, "an array is not a notes object");
+});
+
+test("share links carry the sheet but not the private notes", () => {
+  const c = C.emptyChart("x", NOW, FIXED);
+  c.goal = "Ship it";
+  c.notes.why = "a private reason";
+  const back = C.decodeShare(C.encodeShare(c), NOW, FIXED);
+  assert.equal(back.goal, "Ship it");
+  assert.deepEqual(back.notes, {}, "thinking notes stay on your machine");
+});
+
+/* ── the shipped guidance must survive its own rules ──────────────────── */
+
+const guideBlock = html.match(/<script id="harada-content">([\s\S]*?)<\/script>/);
+assert.ok(guideBlock, "index.html must contain the harada-content block");
+const G = new Function(guideBlock[1] + "\n;return HaradaGuide;")();
+
+test("every starter template is a complete, usable sheet", () => {
+  assert.ok(G.templates.length >= 5);
+  for (const t of G.templates) {
+    assert.ok(t.id && t.name && t.blurb && t.goal, `${t.id} is missing a field`);
+    assert.equal(t.focus.length, 8, `${t.id} must name eight areas`);
+    for (const f of t.focus) {
+      assert.ok(f.name, `${t.id} has an unnamed area`);
+      assert.ok(f.actions.length >= 1 && f.actions.length <= 8, `${t.id}/${f.name} action count`);
+    }
+  }
+});
+
+test("the goal line shipped with each starter passes the goal critique", () => {
+  for (const t of G.templates) {
+    assert.deepEqual(C.critique(t.goal, "goal"), [], `${t.id}: "${t.goal}"`);
+  }
+});
+
+test("the actions shipped with each starter pass the action critique", () => {
+  const bad = [];
+  for (const t of G.templates)
+    for (const f of t.focus)
+      for (const a of f.actions) {
+        // A missing cue is a suggestion, not a defect: plenty of sound actions
+        // are one-off tasks. Shipped content must carry no defects.
+        const notes = C.critique(a, "action").filter((n) => n.kind === "fix");
+        if (notes.length) bad.push(`${t.id} / ${f.name}: "${a}" → ${notes.map((n) => n.code).join(", ")}`);
+      }
+  assert.deepEqual(bad, [], "guidance that cannot pass its own rules is not guidance");
+});
+
+test("every evidence card carries a source and a link", () => {
+  assert.ok(G.evidence.length >= 3);
+  for (const e of G.evidence) {
+    assert.ok(e.claim && e.finding && e.size && e.soWhat, "an evidence card is incomplete");
+    assert.match(e.source, /\(\d{4}\)/, `no year in: ${e.source}`);
+    assert.match(e.url, /^https:\/\/doi\.org\//, `not a DOI link: ${e.url}`);
+  }
+  for (const m of G.myths) assert.ok(m.claim && m.truth && m.why);
+});
+
+test("the worked charts are labelled real or composed, and name eight areas", () => {
+  for (const w of G.worked) {
+    assert.equal(typeof w.real, "boolean", `${w.id} must say whether it is a real chart`);
+    assert.equal(w.focus.length, 8);
+    assert.ok(w.lesson && w.note);
+    if (w.real) assert.ok(w.caveat, "a real chart must say which parts are documented");
+  }
+});
+
+test("the goal prompts and lenses are complete", () => {
+  for (const q of G.goalPrompts) assert.ok(q.key && q.q && q.hint, `prompt ${q.key} incomplete`);
+  assert.equal(new Set(G.goalPrompts.map((q) => q.key)).size, G.goalPrompts.length, "prompt keys must be unique");
+  for (const l of G.lenses) {
+    assert.ok(l.id && l.name && l.idea && l.best);
+    assert.ok(l.prompts.length >= 3, `${l.id} needs prompts`);
+  }
+});

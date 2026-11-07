@@ -32,6 +32,32 @@ So each focus area appears **twice**, and the arithmetic closes exactly:
 
 Type a focus area in either of its two cells and the other updates as you type.
 
+## Thinking it through first
+
+Eighty-one empty cells is a good way to freeze. An optional **Guide** opens beside the
+sheet — never in front of it — and closes again when you don't want it:
+
+- **Goal** — seven prompts that work out what belongs in the middle, including what will
+  stop you and what you will do when it does. It assembles a draft goal line you can drop
+  into the centre cell, and tells you how the one you have reads.
+- **The eight** — five different ways to derive your eight areas (what would stop you,
+  what you cannot yet do, the whole person, inputs rather than outcomes, skill and
+  character together), a subtraction test for whether an area is load-bearing, and a
+  scratch list whose lines you can send straight into empty areas.
+- **Actions** — reads all sixty-four and separates two things: lines that describe a state
+  rather than a step, which it explains and offers to take you to, and lines that simply
+  do not say *when*, which it mentions once rather than sixty times. Also: which eight
+  actions to start with if sixty-four is too many.
+- **Library** — seven starter sheets (marathon, fitness, shipping a product, changing
+  career, a language, money, a book). Each names eight areas and suggests a few actions
+  per area; none fills the sheet, because choosing the actions is the part that does you
+  good. Plus charts worth studying, labelled real or composed.
+- **Evidence** — what is actually known about goal setting, with effect sizes, sources and
+  the places the evidence is weaker than people claim. Including two things you will be
+  told that are not true.
+
+Your working notes are saved with the sheet and are deliberately left out of share links.
+
 ## What it does
 
 - **Fill the sheet** — click any cell and type. Text is centred and shrinks to fit, and the
@@ -134,8 +160,31 @@ The second one is a set of cheap static checks on the HTML — balanced tags, no
 or inline `onclick` creeping back in, print and dark-mode styles still present, and every
 file the service worker promises to cache actually existing. Both run in CI on every push.
 
+## On the research
+
+Every figure in the Evidence panel was read at its source, not taken from a summary. Where
+a finding is contested, extrapolated, or drawn from a literature showing publication bias,
+the page says so rather than quoting the flattering number. Two widely repeated claims are
+listed as what they are: the Harvard/Yale written-goals study never happened, and "21 days
+to form a habit" is a misreading of a 1960 book about recovering from plastic surgery.
+
+If you find something stated as fact here that is wrong, that is a bug. Please open an
+issue.
+
+## Attribution
+
+The method of expanding one goal into eight areas and sixty-four actions is credited to the
+Japanese educator **Takashi Harada**. The 9×9 chart format is widely attributed to
+**Matsumura Yasuo**, who devised it in 1979. Neither is claimed here.
+
+This worksheet is independent. It is **not affiliated with, endorsed by, sponsored by or
+connected to** Takashi Harada, the Harada Education Institute, Matsumura Yasuo, Clover
+Management Research, Shohei Ohtani, or any club, league or organisation. Names appear only
+to say accurately who did what, and to refer to matters of public record.
+
+Nothing here is professional, medical, psychological, legal or financial advice.
+
 ## Licence
 
-Non-commercial use, see [LICENSE](LICENSE). The Harada Method is Takashi Harada's; this is
-a tool for practising it, not a work of his, and it is not affiliated with or endorsed by
-him or his organisation.
+Non-commercial use with attribution — see [LICENSE](LICENSE), which also carries the
+notices that must travel with the work if you republish it.

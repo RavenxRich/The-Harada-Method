@@ -1,65 +1,100 @@
-HARADA METHOD TEMPLATE - LICENSE AGREEMENT
+OPEN WINDOW 64 — LICENCE AND NOTICES
+Copyright (c) 2024–2026 Raven Richardson. All rights reserved except as granted below.
 
-Copyright (c) 2024
 
-NOTICE: This template is inspired by and based on the Harada Method, 
-a goal-setting methodology originally developed by Japanese educator 
-Takashi Harada. This software template is a tool for implementing 
-Mr. Harada's methodology, not an original creation of the software 
-authors.
+1. WHAT IS, AND IS NOT, COVERED BY THIS LICENCE
 
-ACADEMIC USE AND PERSONAL USE LICENSE
+This licence covers the original material in this repository: the HTML, CSS and
+JavaScript, the written guidance and starter sheets, the research summaries as
+written here, and the visual design.
 
-Permission is hereby granted, free of charge, to any person obtaining 
-a copy of this software and associated documentation files (the 
-"Software"), to use, copy, modify, merge, publish, and distribute 
-the Software for NON-COMMERCIAL purposes only, subject to the 
-following conditions:
+It does not cover, and no rights are claimed in:
 
-1. NON-COMMERCIAL USE ONLY
-   The above copyright notice and this permission notice shall be 
-   included in all copies or substantial portions of the Software. 
-   THE SOFTWARE MAY NOT BE SOLD, LICENSED FOR REVENUE, OR USED FOR 
-   ANY COMMERCIAL PURPOSE.
+  (a) the goal-setting method itself — the practice of expanding one goal into
+      eight supporting areas and sixty-four actions — which is credited to the
+      Japanese educator Takashi Harada;
 
-2. ATTRIBUTION REQUIRED
-   Any use of this Software must include clear attribution:
-   - "Inspired by Takashi Harada's goal-setting methodology"
-   - A link to or reference to this repository is appreciated
+  (b) the 9x9 chart format, widely attributed to Matsumura Yasuo, who is
+      reported to have devised it in 1979;
 
-3. NO WARRANTIES
-   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
-   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
-   OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-   NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
-   HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
-   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
-   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
-   DEALINGS IN THE SOFTWARE.
+  (c) any trademark, service mark or trade name of any third party; and
 
-4. ORIGINAL METHODOLOGY
-   This license does not grant any rights or permissions regarding 
-   the Harada Method itself, which is the intellectual property of 
-   Takashi Harada. This Software is merely a digital implementation 
-   tool of that methodology.
+  (d) the underlying facts, research findings and published studies referred
+      to here, which belong to their authors and publishers and are cited so
+      that you can read them yourself.
 
-COMMERCIAL USE PROHIBITION
+Methods, systems and ideas are not the subject of copyright. Nothing in this
+licence should be read as a claim over the method, the chart format, or anyone
+else's work.
 
-The Software may NOT be:
-- Sold or distributed for monetary gain
-- Licensed or sublicensed for commercial purposes
-- Used in paid products or services
-- Included in commercial applications without explicit written 
-  permission from the copyright holders
 
-For commercial licensing inquiries, please contact the repository 
-maintainer.
+2. GRANT
 
-ACKNOWLEDGMENTS
+Permission is granted, free of charge, to any person obtaining a copy of this
+software and its documentation (the "Work"), to use, copy, modify, merge,
+publish and distribute the Work for NON-COMMERCIAL purposes, subject to:
 
-This template was created as a tribute to and tool for implementing 
-the Harada Method developed by Takashi Harada. We acknowledge and 
-respect the original work and methodology created by Mr. Harada.
+  (i)  this licence and the attribution notices in the Work being retained in
+       all copies and substantial portions; and
 
-"Success is not an accident. Success is a choice." - Takashi Harada
+  (ii) the notices in section 3 being kept intact and visible wherever the Work
+       is published.
 
+"Non-commercial" means use that is not primarily intended for, or directed
+towards, commercial advantage or monetary compensation. Personal use, classroom
+and educational use, and use inside an organisation for its own people are
+permitted. Selling the Work, charging for access to it, or bundling it into a
+paid product or service is not, without separate written permission.
+
+For the avoidance of doubt: the copyright holder named above retains all rights
+in the Work and may use, publish, relicense or host it anywhere, including on
+their own commercial websites, without restriction under this licence.
+
+For commercial permission, contact the copyright holder.
+
+
+3. NOTICES THAT MUST TRAVEL WITH THE WORK
+
+  NO AFFILIATION. This Work is independent. It is not affiliated with, endorsed
+  by, sponsored by, licensed by, or connected to Takashi Harada, the Harada
+  Education Institute, Matsumura Yasuo, Clover Management Research, Shohei
+  Ohtani, any sports club, league or governing body, or any other person or
+  organisation named in it. Names are used only to state accurately who
+  originated what, and to refer to published facts. No endorsement is implied.
+
+  NOT ADVICE. The Work is an educational tool. Nothing in it is professional,
+  medical, psychological, legal or financial advice, and nothing in it is a
+  recommendation to take any particular action. Research summaries describe
+  what published studies reported; reported effect sizes are averages across
+  groups and are not predictions about any individual. Decisions made using the
+  Work are the user's own.
+
+  NO DATA COLLECTION. The Work stores everything a user types in that user's
+  own browser. It has no account system, no server component, no analytics and
+  no third-party tracking.
+
+
+4. NO WARRANTY
+
+THE WORK IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE, ACCURACY, AND NONINFRINGEMENT.
+
+
+5. LIMITATION OF LIABILITY
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE WORK OR ITS USE, INCLUDING WITHOUT LIMITATION
+ANY DECISION TAKEN, ACTION OMITTED, OR OUTCOME NOT ACHIEVED BY ANY USER.
+
+Nothing in this licence excludes or limits liability that cannot lawfully be
+excluded or limited.
+
+
+6. CORRECTIONS
+
+If anything stated here as fact is wrong — a citation, a figure, an
+attribution — it is a defect and will be corrected on notice. Please open an
+issue.

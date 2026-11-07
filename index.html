@@ -455,6 +455,130 @@ kbd{
 .viewbar .note{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-faint)}
 @media print{.viewbar{display:none !important}}
 
+/* ─── the guide: a drawer beside the sheet, never in front of it ─────── */
+.guide{
+  position:fixed; top:0; right:0; bottom:0; width:min(460px,100vw);
+  background:var(--surface); border-left:1.5px solid var(--rule-heavy);
+  box-shadow:-16px 0 40px -28px rgba(0,0,0,.5);
+  z-index:60; display:flex; flex-direction:column;
+  transform:translateX(101%); visibility:hidden;
+  transition:transform .22s cubic-bezier(.2,.8,.3,1), visibility .22s;
+}
+.guide[data-open="1"]{transform:none;visibility:visible}
+@media (min-width:1180px){ body[data-guide="1"]{padding-right:470px} }
+.guide-head{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--rule)}
+.guide-head h2{font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:600;font-size:17px;flex:1}
+.guide-nav{display:flex;gap:0;border-bottom:1px solid var(--rule);overflow-x:auto;scrollbar-width:none}
+.guide-nav::-webkit-scrollbar{display:none}
+.guide-nav button{
+  flex:1 0 auto; border:0; border-bottom:2px solid transparent; background:transparent;
+  font-family:"IBM Plex Mono",ui-monospace,monospace; font-weight:500; font-size:10.5px;
+  letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft);
+  padding:10px 12px; cursor:pointer; white-space:nowrap;
+}
+.guide-nav button:hover{color:var(--ink);background:var(--surface-sunk)}
+.guide-nav button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--seal)}
+.guide-nav button:focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
+.guide-body{flex:1;overflow-y:auto;padding:18px 16px 40px}
+.guide-body > p, .guide-body > section > p{font-size:13.5px;color:var(--ink-soft);line-height:1.6}
+.guide h3{font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:600;font-size:15px;margin:0 0 4px}
+.g-lede{font-size:13.5px;color:var(--ink-soft);line-height:1.6;margin-bottom:16px}
+.g-block{border:1px solid var(--rule);padding:13px 14px;margin-bottom:12px;background:var(--surface)}
+.g-block.tight{padding:11px 12px}
+.g-q{font-weight:600;font-size:14px;margin-bottom:3px}
+.g-hint{font-size:12.5px;color:var(--ink-soft);line-height:1.55;margin-bottom:8px}
+.guide textarea, .guide input[type=text]{
+  width:100%; font:inherit; font-size:13.5px; color:var(--ink);
+  background:var(--surface-sunk); border:1px solid var(--rule);
+  padding:7px 9px; resize:vertical; border-radius:0; line-height:1.5;
+}
+.guide textarea:focus-visible, .guide input:focus-visible{outline:2px solid var(--focus);outline-offset:-1px}
+.guide textarea::placeholder, .guide input::placeholder{color:var(--ink-faint)}
+.g-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.g-draft{
+  border-left:3px solid var(--seal); background:var(--surface-sunk);
+  padding:11px 13px; margin-top:12px; font-size:14.5px; font-weight:600; line-height:1.4;
+}
+.g-draft em{display:block;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-faint);font-weight:500;font-style:normal;margin-bottom:5px}
+
+/* lens cards, candidate chips */
+.g-lens{border:1px solid var(--rule);padding:0;margin-bottom:10px}
+.g-lens > button{
+  width:100%; text-align:left; background:transparent; border:0; cursor:pointer;
+  padding:11px 13px; display:flex; gap:9px; align-items:baseline;
+}
+.g-lens > button:hover{background:var(--surface-sunk)}
+.g-lens > button:focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
+.g-lens .nm{font-weight:600;font-size:14px;color:var(--ink);flex:1}
+.g-lens .mark{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-faint)}
+.g-lens[data-open="1"] .mark{color:var(--seal-ink)}
+.g-lens .inner{padding:0 13px 13px;border-top:1px solid var(--rule)}
+.g-lens .idea{font-size:13px;color:var(--ink-soft);line-height:1.55;margin:10px 0 4px}
+.g-lens .best{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.04em;color:var(--ink-faint);margin-bottom:9px}
+.g-lens ul{margin:0;padding-left:17px;font-size:13px;line-height:1.65;color:var(--ink)}
+.g-lens li{margin-bottom:4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{
+  display:inline-flex;align-items:center;gap:7px;
+  border:1px solid var(--rule-heavy);background:var(--surface);
+  padding:5px 7px 5px 10px;font-size:12.5px;max-width:100%;
+}
+.chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px}
+.chip button{
+  border:0;background:var(--ink);color:var(--surface);cursor:pointer;
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.06em;
+  padding:3px 7px;
+}
+.chip button:hover{background:var(--seal)}
+.chip button:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
+.chip[data-used="1"]{opacity:.45}
+
+/* critique list */
+.g-flag{border:1px solid var(--rule);border-left:3px solid var(--seal);padding:10px 12px;margin-bottom:9px}
+.g-flag .where{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-faint);margin-bottom:3px}
+.g-flag .txt{font-size:13.5px;font-weight:600;line-height:1.4;margin-bottom:7px}
+.g-flag dl{margin:0}
+.g-flag dt{font-size:12.5px;font-weight:600;color:var(--seal-ink);margin-top:6px}
+.g-flag dd{margin:0;font-size:12.5px;color:var(--ink-soft);line-height:1.55}
+.g-flag dd.fix{color:var(--ink);margin-top:2px}
+.g-clear{border:1px solid var(--rule);padding:14px;text-align:center;font-size:13.5px;color:var(--ink-soft)}
+
+/* library + evidence */
+.g-card{border:1px solid var(--rule);padding:12px 13px;margin-bottom:10px}
+.g-card h4{font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:600;font-size:14.5px;margin-bottom:3px}
+.g-card .blurb{font-size:12.5px;color:var(--ink-soft);line-height:1.55;margin-bottom:8px}
+.g-card .goalline{font-size:12.5px;color:var(--ink);border-left:2px solid var(--rule);padding-left:9px;margin-bottom:9px}
+.g-card ol.areas{margin:0 0 10px;padding-left:19px;font-size:12.5px;line-height:1.6;color:var(--ink-soft)}
+.g-tag{
+  display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.1em;
+  text-transform:uppercase;border:1px solid var(--rule);padding:2px 6px;color:var(--ink-faint);margin-bottom:7px;
+}
+.g-tag[data-real="1"]{border-color:var(--seal);color:var(--seal-ink)}
+.g-ev{border:1px solid var(--rule);padding:12px 13px;margin-bottom:11px}
+.g-ev .claim{font-weight:600;font-size:14px;line-height:1.35;margin-bottom:6px}
+.g-ev p{font-size:12.5px;color:var(--ink-soft);line-height:1.6;margin-bottom:6px}
+.g-ev .size{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink);background:var(--surface-sunk);
+  padding:7px 9px;line-height:1.5;margin-bottom:7px}
+.g-ev .sowhat{font-size:12.5px;color:var(--ink);border-left:3px solid var(--seal);padding-left:9px;line-height:1.55}
+.g-ev .cite{font-size:11.5px;color:var(--ink-faint);margin-top:8px;line-height:1.45}
+.g-ev .cite a{color:var(--ink-soft)}
+.g-myth{border:1px dashed var(--rule-heavy);padding:12px 13px;margin-bottom:11px;background:var(--surface-sunk)}
+.g-myth .claim{font-weight:600;font-size:13.5px;line-height:1.4;margin-bottom:6px;color:var(--ink-soft)}
+.g-myth .claim::before{content:"\2717 ";color:var(--seal-ink)}
+.g-myth p{font-size:12.5px;color:var(--ink);line-height:1.6;margin-bottom:6px}
+.g-note{font-size:12px;color:var(--ink-faint);line-height:1.6;margin-top:14px;padding-top:12px;border-top:1px solid var(--rule)}
+.legal{font-size:12px;color:var(--ink-soft);line-height:1.65}
+.legal h4{font-family:"IBM Plex Sans Condensed",sans-serif;font-size:13.5px;font-weight:600;margin:14px 0 4px;color:var(--ink)}
+.legal p{margin-bottom:7px}
+
+@media (max-width:720px){
+  .guide{width:100vw;border-left:0}
+  .chip span{max-width:180px}
+}
+@media print{ .guide{display:none !important} }
+
 </style>
 </head>
 <body>
@@ -475,6 +599,7 @@ kbd{
           <button type="button" class="btn quiet danger" id="delChart">Delete sheet</button>
         </div>
       </details>
+      <button type="button" class="btn" id="guideBtn" aria-expanded="false" aria-controls="guide">Guide</button>
       <button type="button" class="btn quiet" id="themeBtn">Dark</button>
       <button type="button" class="btn quiet" id="helpBtn" aria-label="Keyboard shortcuts and help">?</button>
     </div>
@@ -532,11 +657,34 @@ kbd{
   </div>
 
   <p class="colophon">
-    The Harada Method was developed by the Japanese educator Takashi Harada. This worksheet is a tool for
-    practising it, not a work of his &mdash; see <a href="LICENSE">LICENSE</a> for the non-commercial terms.
-    Everything you type stays in this browser: no account, no server, no analytics.
+    This is an independent worksheet for practising a goal-setting method developed by the Japanese educator
+    Takashi Harada. It is not affiliated with, endorsed by, or connected to Takashi Harada, the Harada Education
+    Institute, or any person or chart named on this page. Nothing here is professional, medical or financial
+    advice. Everything you type stays in this browser: no account, no server, no analytics.
+    <a href="#" id="legalLink">Attribution and terms</a> &middot; <a href="LICENSE">Licence</a>
   </p>
 </div>
+
+<aside class="guide" id="guide" data-open="0" aria-label="Guide" aria-hidden="true">
+  <div class="guide-head">
+    <h2 id="guideTitle">Guide</h2>
+    <button type="button" class="btn quiet" id="guideClose" aria-label="Close the guide">Close</button>
+  </div>
+  <div class="guide-nav" role="tablist" aria-label="Guide sections">
+    <button type="button" role="tab" id="tab-goal" aria-selected="true" aria-controls="panel-goal">Goal</button>
+    <button type="button" role="tab" id="tab-eight" aria-selected="false" aria-controls="panel-eight">The eight</button>
+    <button type="button" role="tab" id="tab-actions" aria-selected="false" aria-controls="panel-actions">Actions</button>
+    <button type="button" role="tab" id="tab-library" aria-selected="false" aria-controls="panel-library">Library</button>
+    <button type="button" role="tab" id="tab-evidence" aria-selected="false" aria-controls="panel-evidence">Evidence</button>
+  </div>
+  <div class="guide-body" id="guideBody">
+    <section id="panel-goal" role="tabpanel" aria-labelledby="tab-goal"></section>
+    <section id="panel-eight" role="tabpanel" aria-labelledby="tab-eight" hidden></section>
+    <section id="panel-actions" role="tabpanel" aria-labelledby="tab-actions" hidden></section>
+    <section id="panel-library" role="tabpanel" aria-labelledby="tab-library" hidden></section>
+    <section id="panel-evidence" role="tabpanel" aria-labelledby="tab-evidence" hidden></section>
+  </div>
+</aside>
 
 <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
 
@@ -646,6 +794,7 @@ var HaradaCore = (function () {
       goal: "", deadline: "",
       focus: new Array(FOCUS_N).fill(""),
       actions: grid(""), done: grid(false),
+      notes: {},
       createdAt: now, updatedAt: now
     };
   }
@@ -665,6 +814,13 @@ var HaradaCore = (function () {
     base.name = str(raw.name).trim() || "Untitled sheet";
     base.goal = str(raw.goal);
     base.deadline = str(raw.deadline);
+    // Working notes from the guide. Free-form keys, strings only, capped so a
+    // pasted essay cannot bloat the saved sheet.
+    if (raw.notes && typeof raw.notes === "object" && !Array.isArray(raw.notes)) {
+      Object.keys(raw.notes).slice(0, 40).forEach(function (k) {
+        if (typeof raw.notes[k] === "string") base.notes[String(k).slice(0, 40)] = raw.notes[k].slice(0, 4000);
+      });
+    }
     base.createdAt = typeof raw.createdAt === "number" ? raw.createdAt : base.createdAt;
     base.updatedAt = typeof raw.updatedAt === "number" ? raw.updatedAt : base.updatedAt;
     for (var f = 0; f < FOCUS_N; f++) {
@@ -837,6 +993,166 @@ var HaradaCore = (function () {
     return c;
   }
 
+  /* ── Critique: is what you wrote actually workable? ────────────────
+     Deterministic and advisory. It asks questions rather than declaring
+     errors, because a noisy critic is worse than none. English-only; it
+     stays quiet on text it cannot read rather than guessing. */
+
+  var WISH_STATE = /^(be|become|feel|stay|remain)\b/i;
+  var WISH_MAYBE = /^(get|have|keep|make)\b/i;
+  var SOFT_VERBS = /^(try|aim|attempt|focus|work\s+on|think\s+about|consider|explore|look\s+into|maintain|continue|improve|develop|enhance|optimi[sz]e|leverage|engage)\b/i;
+  var COMPARATIVES = /\b(more|less|better|faster|stronger|healthier|harder|fitter|further)\b/i;
+  var HAS_NUMBER = /\d|\b(one|two|three|four|five|six|seven|eight|nine|ten|twice|daily|weekly|monthly)\b/i;
+  // Something that settles a goal yes/no without asking how you feel.
+  var SETTLES = /\b(win|won|finish|finished|publish|published|launch|launched|ship|shipped|qualify|qualified|graduate|graduated|sell|sold|sign|signed|complete|completed|open|opened|move|moved|quit|hire|hired|accept|accepted|admit|admitted|submit|submitted|deliver|delivered|offer|offered|manuscript|draft|built|build)\b/i;
+  var HAS_CUE = new RegExp([
+    "\\b(?:every|each|daily|weekly|nightly|monthly|hourly|while|during|when|whenever|before|after|until)\\b",
+    "\\b(?:mon|tues|wednes|thurs|fri|satur|sun)days?\\b",
+    "\\b(?:morning|afternoon|evening|night|weekend|weekday)s?\\b",
+    "\\b(?:first|last)\\s+thing\\b",
+    "\\b(?:on\\s+waking|bedtime|lunchtime|breakfast|payday|o'clock)\\b",
+    "\\b(?:at|by)\\s*\\d",                 // at 7, by 22:30
+    "\\d\\s?(?:am|pm)\\b",
+    "\\bper\\s+(?:day|week|month)\\b",
+    "\\ba\\s+(?:day|week|month|quarter|year|fortnight)\\b",   // "one thing a week"
+    "\\b(?:once|twice|thrice)\\b",
+    "\\b(?:quarterly|fortnightly|annually|yearly)\\b",
+    "\\bthis\\s+(?:week|month|quarter|year)\\b"
+  ].join("|"), "i");
+  var HAS_DATE = /\b(by|before|within|end\s+of|20\d\d|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|week|weeks|month|months|year|years|spring|summer|autumn|fall|winter)\b/i;
+  var LATIN = /[A-Za-z]/;
+  // "and" usually joins two days or two nouns, not two jobs. Only call it a
+  // second job when a doing-word actually follows the join.
+  var DOING = "call|email|message|text|write|draft|send|post|publish|read|study|review|revise|plan|book|schedule|" +
+    "run|walk|swim|cycle|lift|train|stretch|practise|practice|rehearse|play|cook|eat|drink|sleep|meditate|" +
+    "log|track|record|measure|count|check|clean|tidy|buy|pay|save|ask|meet|visit|watch|listen|update|make|do";
+  // A comma after a leading cue ("Every Sunday evening, plan ...") is the good
+  // form, so only a semicolon or a genuine second verb counts as two jobs.
+  var SECOND_JOB = new RegExp(";|\\b(?:and|then|plus|also)\\s+(?:" + DOING + ")\\b", "i");
+
+  var NOTES = {
+    wish: {
+      label: "A state, not a step",
+      why: "This describes how you want things to be, not something you could do on Tuesday.",
+      fix: "Name the doing. “Be fitter” → “Swim 1 km on Tuesday and Friday mornings.”"
+    },
+    soft: {
+      label: "A soft verb",
+      why: "“Work on” and “improve” can be claimed on any day and finished on none.",
+      fix: "Swap in a verb you could film yourself doing: call, write, swim, send, read, cook."
+    },
+    vague: {
+      label: "Compared with what?",
+      why: "“More” and “better” have no finish line, so you will never know where you stand.",
+      fix: "Put a number on it: how many, how long, how often."
+    },
+    nocue: {
+      label: "No when",
+      why: "Plans with an explicit cue — if this, then that — are carried out more often than plans without one.",
+      fix: "Add the trigger: “After I make coffee, I…”, “Every Sunday evening, I…”"
+    },
+    compound: {
+      label: "Two actions in one cell",
+      why: "A cell holding two jobs gets half-finished and never stamped.",
+      fix: "Split it across two cells. You have eight."
+    },
+    long: {
+      label: "Longer than the cell",
+      why: "If it does not fit on the sheet, it will not be read on the sheet.",
+      fix: "Keep the detail in your notes; put the trigger and the action here."
+    },
+    nodeadline: {
+      label: "No by-when",
+      why: "A goal with no date is a wish that renews itself every morning.",
+      fix: "Give it a date you would be embarrassed to miss."
+    },
+    nomeasure: {
+      label: "No way to settle it",
+      why: "Someone else should be able to say whether you did it, without asking you how you feel.",
+      fix: "Add the thing that settles it: a number, a distance, a yes/no event."
+    }
+  };
+
+  // "fix" is something wrong with the line. "idea" is a way to make a sound
+  // line stronger — worth offering once, not worth nagging about sixty times.
+  var IDEAS = { nocue: true };
+  function note(code) {
+    var n = NOTES[code];
+    return { code: code, kind: IDEAS[code] ? "idea" : "fix", label: n.label, why: n.why, fix: n.fix };
+  }
+
+  /**
+   * @param {string} text  what the user wrote
+   * @param {string} kind  "goal" | "focus" | "action"
+   * @returns {Array} advisory notes, most important first; [] when it reads well
+   */
+  function critique(text, kind) {
+    var t = String(text == null ? "" : text).trim();
+    if (!t) return [];
+    if (!LATIN.test(t)) return [];        // not a language these rules can read
+    var words = t.split(/\s+/).length;
+    var out = [];
+
+    if (kind === "action" || kind === "goal") {
+      if (WISH_STATE.test(t) || (WISH_MAYBE.test(t) && COMPARATIVES.test(t))) out.push(note("wish"));
+      else if (SOFT_VERBS.test(t)) out.push(note("soft"));
+      if (COMPARATIVES.test(t) && !HAS_NUMBER.test(t)) out.push(note("vague"));
+    }
+
+    if (kind === "action") {
+      if (!HAS_CUE.test(t)) out.push(note("nocue"));
+      // "If x, then y" is the shape we are asking for, not two jobs in one cell.
+      var isIfThen = /^(if|when|whenever|after|before)\b/i.test(t);
+      if (words > 9 && !isIfThen && SECOND_JOB.test(t)) out.push(note("compound"));
+      if (t.length > 110) out.push(note("long"));
+    }
+
+    if (kind === "goal") {
+      if (!HAS_DATE.test(t)) out.push(note("nodeadline"));
+      if (!HAS_NUMBER.test(t) && !SETTLES.test(t)) out.push(note("nomeasure"));
+    }
+
+    if (kind === "focus" && words > 7) out.push(note("long"));
+
+    return out;
+  }
+
+  /** Every action on a sheet that has something worth asking about. */
+  function critiqueChart(chart) {
+    var c = normaliseChart(chart), out = [];
+    if (c.goal.trim()) {
+      var g = critique(c.goal, "goal");
+      if (g.length) out.push({
+        where: "goal", focus: -1, action: -1, text: c.goal.trim(), notes: g,
+        worst: g.some(function (x) { return x.kind === "fix"; }) ? "fix" : "idea"
+      });
+    }
+    for (var f = 0; f < FOCUS_N; f++)
+      for (var a = 0; a < ACTION_N; a++) {
+        var t = c.actions[f][a];
+        if (!t.trim()) continue;
+        var n = critique(t, "action");
+        if (n.length) out.push({
+          where: "action", focus: f, action: a, text: t.trim(), notes: n,
+          worst: n.some(function (x) { return x.kind === "fix"; }) ? "fix" : "idea"
+        });
+      }
+    return out;
+  }
+
+  /** Assemble the answers from the goal prompts into one line to edit. */
+  function draftGoal(parts) {
+    parts = parts || {};
+    var want = String(parts.want || "").trim().replace(/[.\s]+$/, "");
+    var measure = String(parts.measure || "").trim().replace(/[.\s]+$/, "");
+    var by = String(parts.by || "").trim().replace(/[.\s]+$/, "");
+    if (!want) return "";
+    var line = want.charAt(0).toUpperCase() + want.slice(1);
+    if (measure && line.toLowerCase().indexOf(measure.toLowerCase()) === -1) line += " — " + measure;
+    if (by) line += ", by " + by;
+    return line;
+  }
+
   return {
     SCHEMA: SCHEMA, FOCUS_N: FOCUS_N, ACTION_N: ACTION_N, TOTAL: TOTAL,
     LAYOUT: LAYOUT, buildLayout: buildLayout, cellMap: cellMap,
@@ -844,10 +1160,367 @@ var HaradaCore = (function () {
     normaliseChart: normaliseChart, fromV1Cells: fromV1Cells, migrate: migrate,
     progress: progress, toMarkdown: toMarkdown,
     encodeShare: encodeShare, decodeShare: decodeShare,
-    bytesToB64url: bytesToB64url, b64urlToBytes: b64urlToBytes
+    bytesToB64url: bytesToB64url, b64urlToBytes: b64urlToBytes,
+    critique: critique, critiqueChart: critiqueChart, draftGoal: draftGoal
   };
 })();
 if (typeof globalThis !== "undefined") globalThis.HaradaCore = HaradaCore;
+</script>
+
+<!-- Written content: prompts, lenses, worked charts, evidence. No DOM, no logic. -->
+<script id="harada-content">
+"use strict";
+var HaradaGuide = (function () {
+
+  /* ── Finding the goal that belongs in the middle ──────────────────── */
+  var goalPrompts = [
+    {
+      key: "want",
+      q: "What do you actually want?",
+      hint: "Write it badly. You are not committing to the wording, only getting it out of your head.",
+      placeholder: "run a marathon / leave this job / speak Spanish with my in-laws",
+      rows: 2
+    },
+    {
+      key: "why",
+      q: "Why this, and why now?",
+      hint: "If the honest answer is that someone else wants it, that is worth knowing before you fill in sixty-four cells. Plans work better when you actually want the thing.",
+      placeholder: "because I have said 'next year' four years running",
+      rows: 3
+    },
+    {
+      key: "who",
+      q: "Who else is better off if you pull this off?",
+      hint: "Harada's version of this chart is not purely self-interested — a goal that serves someone beyond you tends to survive the weeks when you cannot be bothered.",
+      placeholder: "my kids see it is possible / my team stops waiting on me",
+      rows: 2
+    },
+    {
+      key: "measure",
+      q: "How will you know you have it?",
+      hint: "Someone who does not know you should be able to look and say yes or no, without asking how you feel about it.",
+      placeholder: "crossed the line under 4:30 / contract signed / held a 20-minute conversation",
+      rows: 2
+    },
+    {
+      key: "by",
+      q: "By when?",
+      hint: "A date you would be slightly embarrassed to miss. Not so near it is impossible, not so far it is theoretical.",
+      placeholder: "October 2027",
+      rows: 1
+    },
+    {
+      key: "obstacle",
+      q: "What is most likely to stop you? Be specific.",
+      hint: "Picture the thing clearly rather than talking yourself up. Imagining the win and the obstacle together beats imagining only the win.",
+      placeholder: "the first cold Tuesday in November when nothing hurts yet and nothing is due",
+      rows: 3
+    },
+    {
+      key: "ifthen",
+      q: "When that happens, what exactly will you do?",
+      hint: "Write it as if-then: “If ‹that› happens, then I will ‹this›.” This sentence is the single best-evidenced thing on the page.",
+      placeholder: "If it is dark and cold at 6pm, then I put on the kit before I sit down",
+      rows: 3
+    }
+  ];
+
+  var ownershipTest = {
+    q: "One last check",
+    body: "If nobody ever found out you had done this — no announcement, no one impressed — would you still want it?",
+    yes: "Good. That is the kind of goal that survives February.",
+    no: "Worth a pause. A goal you are carrying for someone else's benefit tends to be abandoned quietly and then blamed on discipline. Consider what you would want instead."
+  };
+
+  /* ── Eight ways to find the eight ─────────────────────────────────── */
+  var lenses = [
+    {
+      id: "constraint",
+      name: "What would stop you",
+      idea: "Work backwards from failure. The eight areas are the eight things that, left alone, guarantee you miss.",
+      best: "Best when you have tried before and not got there.",
+      prompts: [
+        "Imagine it is the deadline and you missed. What went wrong? Write the first five answers.",
+        "Which of those is a thing you could actually work on, rather than weather?",
+        "What has stopped you the last time you tried this?",
+        "What would a rival say your weakness is?"
+      ]
+    },
+    {
+      id: "capability",
+      name: "What you cannot yet do",
+      idea: "List the capabilities the finished version of you has that today's version does not.",
+      best: "Best for skills and crafts, where the gap is knowledge and reps.",
+      prompts: [
+        "Name someone who has already done this. What can they do that you cannot?",
+        "What would you have to be able to do in your sleep?",
+        "Which part do you currently avoid because you are bad at it?",
+        "What do you fake your way through today?"
+      ]
+    },
+    {
+      id: "system",
+      name: "The whole person",
+      idea: "Eight standing parts of a life: body, skill, mind, people, environment, time, money, knowledge. Fill each with what this goal needs from it.",
+      best: "Best when the goal touches everything, or when you do not know where to start.",
+      prompts: [
+        "Body — what does this ask of your physical condition?",
+        "Skill — what craft has to improve?",
+        "Mind — what has to change about how you handle pressure or boredom?",
+        "People — who do you need, and who needs managing?",
+        "Environment — what has to be true of where you live and work?",
+        "Time — what has to come off the calendar?",
+        "Money — what does this cost, and where does it come from?",
+        "Knowledge — what do you need to understand that you do not?"
+      ]
+    },
+    {
+      id: "input",
+      name: "Inputs, not outcomes",
+      idea: "The centre is an outcome you do not fully control. The eight around it should be things you do control.",
+      best: "Best for competitive goals, where the result depends on other people.",
+      prompts: [
+        "Which parts of this are genuinely in your hands?",
+        "If you did everything right and still lost, what would you want to have done well?",
+        "What would you keep doing even in a bad season?",
+        "What is the daily work underneath the result?"
+      ]
+    },
+    {
+      id: "harada",
+      name: "Skill and character together",
+      idea: "The shape of the chart Ohtani filled in: most cells are craft, but some are character, relationships and the conditions that let luck find you.",
+      best: "Best when you suspect the technical answer is not the whole answer.",
+      prompts: [
+        "What are the four or five technical areas? Start there.",
+        "What kind of person does this require you to be?",
+        "Who has to want you to succeed, and why would they?",
+        "What makes good fortune more likely to land on you — and what makes people decide you deserve it?"
+      ]
+    }
+  ];
+
+  var pressureTest = {
+    q: "The subtraction test",
+    body: "Take one candidate. Suppose it went perfectly and the other seven stayed exactly as they are today. Would you still miss the goal?",
+    pass: "If yes — you would still miss — keep it. It is load-bearing.",
+    fail: "If no — that one alone would get you there — then either it is the whole goal and belongs in the middle, or the other seven are padding.",
+    extra: "Run it the other way too: if this one stayed exactly as it is and the other seven were perfect, would you still get there? If yes, it is not worth eight cells."
+  };
+
+  /* ── Charts worth studying ────────────────────────────────────────── */
+  var worked = [
+    {
+      id: "ohtani",
+      name: "Shohei Ohtani, first year of high school",
+      real: true,
+      note: "The best-known chart of this kind. He filled it in at Hanamaki Higashi High School under coach Hiroshi Sasaki; it is usually dated to 2010, when he was sixteen or seventeen — accounts differ on the detail.",
+      goal: "ドラ１ ８球団 — a first-round draft pick from all eight teams",
+      focus: [
+        "体づくり — building the body",
+        "コントロール — control",
+        "キレ — sharpness on the ball",
+        "スピード 160km/h — speed",
+        "変化球 — breaking balls",
+        "運 — luck",
+        "人間性 — character",
+        "メンタル — mental"
+      ],
+      lesson: "Six of the eight are baseball. Two are not: character, and luck. A sixteen-year-old decided that the kind of person he was, and whether good fortune found him, were trainable — and gave each of them eight cells. Most charts people write are eight columns of technique. That is usually the thing missing.",
+      caveat: "The centre and the eight around it are well documented. The sixty-four actions inside them are widely reproduced online in versions that disagree, so they are not reprinted here."
+    },
+    {
+      id: "composed-career",
+      name: "Leaving a job you have outgrown",
+      real: false,
+      note: "Composed for this template to show the shape of a non-athletic chart. Not anyone's real sheet.",
+      goal: "Signed somewhere I would have been turned down for last year, by September",
+      focus: [
+        "Proof of work",
+        "The people who vouch",
+        "Interview craft",
+        "Money runway",
+        "What I will not take",
+        "Energy to do this after work",
+        "Market knowledge",
+        "Telling the story"
+      ],
+      lesson: "Note “What I will not take”. A focus area can be a line you hold rather than a thing you build, and holding it is work: it needs its own eight cells, or the first decent offer quietly rewrites the goal."
+    }
+  ];
+
+  /* ── Starter sheets ───────────────────────────────────────────────────
+     A starter names the eight areas and offers a few candidate actions for
+     each. It deliberately does not fill all sixty-four: choosing the actions
+     is the part that does you any good. Every starter carries at least one
+     area that is not technique. */
+  var templates = [
+    {
+      id: "marathon", name: "Run a first marathon",
+      blurb: "Endurance, where the training is obvious and the thing that breaks you is everything around it.",
+      goal: "Finish a marathon under 4:30, by October 2027",
+      focus: [
+        { name: "Weekly mileage", actions: ["Long run every Sunday morning", "Three runs a week, in the diary before Monday", "Add no more than 10% a week"] },
+        { name: "Strength", actions: ["Squats and single-leg work every Tuesday", "Core work after each easy run", "Calf raises while the kettle boils"] },
+        { name: "Sleep", actions: ["Lights out by 22:30 on training nights", "No screens after the last meal", "Nap on long-run afternoons"] },
+        { name: "Fuel", actions: ["Practise race-day breakfast before every long run", "Carry gels on runs over 90 minutes", "Drink 500ml before any morning run"] },
+        { name: "Injury prevention", actions: ["New shoes every 700km, logged", "Stretch hamstrings after every session", "Stop at the first sharp pain, not the third"] },
+        { name: "Race craft", actions: ["Run one half-marathon as a rehearsal", "Practise the first 5km deliberately slow", "Walk the finish area the day before"] },
+        { name: "The people around it", actions: ["Agree the Sunday morning with the family each week", "Find one person to run long with monthly", "Tell three people the target time"] },
+        { name: "Staying in it when it is dull", actions: ["If it is dark and cold, then kit on before sitting down", "Review the log every Sunday evening", "One new route a month"] }
+      ]
+    },
+    {
+      id: "fitness", name: "Get genuinely fit",
+      blurb: "No race, no finish line handed to you — which means the measure has to be built, not found.",
+      goal: "Ten unbroken pull-ups and a 25-minute 5km, by next summer",
+      focus: [
+        { name: "Moving most days", actions: ["Walk 30 minutes every lunchtime", "Take the stairs, every time", "If a day has no session, then walk after dinner"] },
+        { name: "Getting stronger", actions: ["Lift three times a week, same days", "Add weight or a rep every session, logged", "Film one set a week to check form"] },
+        { name: "Eating like you mean it", actions: ["Protein at every meal", "Cook on Sunday for the first three days", "Decide the week's meals every Saturday"] },
+        { name: "Sleep", actions: ["Same wake time seven days a week", "Phone charges outside the bedroom", "No coffee after midday"] },
+        { name: "Drink", actions: ["Two alcohol-free days minimum, chosen in advance", "Water before every coffee", "Never drink the night before a session"] },
+        { name: "Measuring honestly", actions: ["Weigh and photograph monthly, same morning", "Log every session the same day", "Test the 5km every eight weeks"] },
+        { name: "Who you do it with", actions: ["One session a week with someone else", "Join something with a fixed start time", "Tell one person the weekly plan"] },
+        { name: "Recovering from a bad week", actions: ["If two sessions are missed, then restart the next day, not Monday", "Never two blank weeks in a row", "Write down what actually caused the gap"] }
+      ]
+    },
+    {
+      id: "ship", name: "Ship a product",
+      blurb: "Where the work is rarely the bottleneck and the bottleneck is rarely admitted.",
+      goal: "Ten people paying, by the end of Q3",
+      focus: [
+        { name: "Talking to users", actions: ["Three customer calls every week", "Write up each call the same day", "Ask what they did, never what they would do"] },
+        { name: "Building", actions: ["Ship something visible every Friday", "One cut scope decision a week, written down", "Nothing in the backlog older than a month"] },
+        { name: "Getting found", actions: ["Publish one thing a week", "Reply to every mention within a day", "One partnership conversation a month"] },
+        { name: "Money", actions: ["Know the runway to the week, every Monday", "Price it before building it", "Invoice on the day, not the month"] },
+        { name: "Saying no", actions: ["Write down what this is not, and reread it monthly", "Decline one good idea a week on purpose", "No new feature without a user who asked twice"] },
+        { name: "Your own energy", actions: ["One full day off a week, no exceptions", "Hardest work before the first meeting", "If the week had no deep work, then clear a day in the next"] },
+        { name: "Advice and the people who give it", actions: ["One conversation a month with someone further ahead", "Ask for the criticism explicitly", "Keep a list of who was right"] },
+        { name: "Knowing when to stop", actions: ["Decide the kill criteria now, in writing", "Review them every quarter against the numbers", "Tell one person what would make you walk away"] }
+      ]
+    },
+    {
+      id: "career", name: "Change career",
+      blurb: "A transition is mostly evidence, people and nerve — in that order.",
+      goal: "Signed somewhere I would have been turned down for last year, by September",
+      focus: [
+        { name: "Proof you can do it", actions: ["One finished piece of work a month, public", "Rebuild the portfolio by the end of the month", "Get one real brief, even unpaid, each quarter"] },
+        { name: "People who will vouch", actions: ["One coffee a fortnight with someone in the field", "Ask two former colleagues for a written reference now", "Help one person before asking anything"] },
+        { name: "Interview craft", actions: ["Rehearse the three hard questions out loud weekly", "Record one answer and watch it back", "Write the story of the switch in six sentences"] },
+        { name: "Money runway", actions: ["Know exactly how many months you have", "Cut one fixed cost this month", "Decide the lowest number you would accept, before any offer"] },
+        { name: "What you will not take", actions: ["Write the three dealbreakers and date them", "Reread them before every second interview", "If an offer breaks one, then sleep on it before replying"] },
+        { name: "Energy after work", actions: ["Two protected evenings a week, in the calendar", "The hard hour before anything else at the weekend", "If a week is lost to the day job, then say so out loud"] },
+        { name: "Knowing the market", actions: ["Read five job specs a week and note the repeats", "Track what the range actually is", "Follow three companies properly, not thirty"] },
+        { name: "Nerve", actions: ["Apply to one thing you feel unready for, monthly", "Keep the rejections in a file and reread quarterly", "Tell one person each time you apply"] }
+      ]
+    },
+    {
+      id: "language", name: "Learn a language properly",
+      blurb: "The gap is almost never study. It is hours of being slightly uncomfortable out loud.",
+      goal: "Hold a 20-minute conversation with my in-laws without switching to English, by Christmas",
+      focus: [
+        { name: "Speaking out loud", actions: ["Thirty minutes with a tutor twice a week, booked a month ahead", "Talk to yourself through the commute", "Never switch to English first"] },
+        { name: "Listening", actions: ["One podcast episode every morning", "Rewatch one scene until every word lands, weekly", "Listen without subtitles once a week"] },
+        { name: "Words", actions: ["Ten new cards a day, from things you actually wanted to say", "Review the deck before coffee", "Delete cards you will never use"] },
+        { name: "Grammar", actions: ["One pattern a week, used in three real sentences", "Write five sentences a day and get them corrected", "Keep a list of your own repeated mistakes"] },
+        { name: "Reading", actions: ["Ten minutes before bed, same book", "Read one news item a day in the language", "Reread the first chapter after three months"] },
+        { name: "Being understood", actions: ["Record yourself monthly and compare", "Drill the three sounds you cannot make", "Ask someone to correct your accent, once"] },
+        { name: "People to use it with", actions: ["One conversation a week with a real person", "Change one weekly errand into the language", "Ask the in-laws to stop rescuing you"] },
+        { name: "Surviving the embarrassment", actions: ["If you freeze, then say the childish version rather than nothing", "Keep a note of the worst moments and reread at six months", "Count conversations, not minutes studied"] }
+      ]
+    },
+    {
+      id: "money", name: "Get on top of money",
+      blurb: "Where the arithmetic is easy and the behaviour is not.",
+      goal: "Six months of costs saved and no debt above 0%, by this time next year",
+      focus: [
+        { name: "Knowing the numbers", actions: ["Read every account every Sunday evening", "Write down what came in and went out, monthly", "Know your real monthly cost to the pound"] },
+        { name: "Spending less than you earn", actions: ["Decide the week's spending on Sunday", "One no-spend day a week", "If it is over £100, then sleep on it"] },
+        { name: "Clearing debt", actions: ["Pay the highest rate first, automatically on payday", "Call one lender about the rate this month", "Never carry a new balance past a month"] },
+        { name: "Building the buffer", actions: ["Standing order on payday, before anything else", "Raise it by 1% every quarter", "Keep it somewhere slightly annoying to reach"] },
+        { name: "Earning more", actions: ["Ask for the review you have been putting off", "One hour a week on the thing that raises your rate", "Know what your work pays elsewhere"] },
+        { name: "The fixed costs", actions: ["Cancel one subscription a month", "Re-shop insurance and energy every renewal", "List every recurring payment, once, properly"] },
+        { name: "Talking about it", actions: ["One honest money conversation a month at home", "Agree what counts as a joint decision", "Say the real number out loud to someone"] },
+        { name: "Not panicking", actions: ["Do not check investments more than monthly", "Write the plan down so the bad week cannot rewrite it", "If markets fall, then change nothing for 30 days"] }
+      ]
+    },
+    {
+      id: "book", name: "Write a book",
+      blurb: "A long-haul project where the only real enemy is the gap between sessions.",
+      goal: "Finished manuscript with a first reader's notes back, by next autumn",
+      focus: [
+        { name: "Words on the page", actions: ["500 words before anything else, six days a week", "Same chair, same hour", "Log the daily count where you can see it"] },
+        { name: "Knowing the shape", actions: ["One-page outline, revisited monthly", "Write the ending early", "Name what the book argues in one sentence"] },
+        { name: "Research", actions: ["Research only on Fridays, never mid-draft", "Keep a single file of sources", "Stop when you are reading to avoid writing"] },
+        { name: "Editing", actions: ["Never edit the day you wrote it", "One full pass a quarter, printed", "Read dialogue aloud"] },
+        { name: "Readers", actions: ["One chapter to one reader every month", "Ask what was boring, not what was good", "Keep the notes you disagree with for a week before deciding"] },
+        { name: "The business end", actions: ["Research five agents properly this quarter", "Draft the pitch letter before the book is done", "Read the acknowledgements of three books like yours"] },
+        { name: "Protecting the time", actions: ["Two protected mornings a week in the calendar", "Say no to one thing a month, explicitly", "If a morning is lost, then do not try to make it up at night"] },
+        { name: "Staying sane about it", actions: ["Do not reread the opening chapter for pleasure", "Tell nobody the deadline except one person", "Mark the halfway point and stop to notice it"] }
+      ]
+    }
+  ];
+
+  /* ── What the research actually says ──────────────────────────────── */
+  var evidence = [
+    {
+      claim: "Specific and hard beats “do your best”.",
+      finding: "Across decades of studies, specific and difficult goals produced more effort and higher performance than vague or easy ones. Performance stopped climbing only when it hit the limit of someone's ability, or when their commitment to a very hard goal gave out.",
+      size: "Earlier meta-analyses put the specific-versus-do-your-best difference at roughly d = .42 to .80.",
+      source: "Locke & Latham (2002), American Psychologist 57(9), 705–717.",
+      url: "https://doi.org/10.1037/0003-066X.57.9.705",
+      soWhat: "It is the argument for the centre cell being sharp, and for the goal being harder than comfortable. It is also the argument against “get fitter”."
+    },
+    {
+      claim: "If-then plans get carried out more often than intentions.",
+      finding: "Deciding in advance when and where you will act — “if this situation arises, then I will do that” — outperformed holding the same goal without a plan. The effect was larger when the plan really did have an if-then shape, when the person was genuinely motivated, and when the plan had been rehearsed.",
+      size: "Across 642 tests, d ran from .27 to .66 depending on the outcome. The original 2006 review of 94 tests reported d = .65; the newer, much larger review also reports evidence of publication bias, so read the higher numbers as the optimistic end.",
+      source: "Sheeran, Listrom & Gollwitzer (2025), European Review of Social Psychology 36(1), 162–194. Earlier: Gollwitzer & Sheeran (2006).",
+      url: "https://doi.org/10.1080/10463283.2024.2334563",
+      soWhat: "This is why the sheet keeps asking when an action happens. An action with a trigger is a different object from an action without one."
+    },
+    {
+      claim: "Picture the obstacle, not just the win.",
+      finding: "Mental contrasting — holding the wished-for outcome and the real obstacle in mind together, then making an if-then plan for the obstacle — beat control conditions on goal attainment across health, academic and interpersonal goals.",
+      size: "g = 0.34 (95% CI 0.23–0.44) across 24 effects and 15,907 people; 0.24 after correcting for probable publication bias. Worth knowing: when people worked through it on paper alone it was g = 0.28, against g = 0.47 when someone walked them through it.",
+      source: "Wang, Wang & Gai (2021), Frontiers in Psychology 12, 565202.",
+      url: "https://doi.org/10.3389/fpsyg.2021.565202",
+      soWhat: "It is why the goal prompts ask what will stop you. It is also the honest limit of this page: a worksheet you fill in alone is the weaker version. If you can get one person to go through it with you, do."
+    },
+    {
+      claim: "New habits take longer to set than you have been told.",
+      finding: "People adopting a new daily behaviour took a median of 66 days to reach their plateau of automaticity, with enormous variation between individuals and behaviours.",
+      size: "Median 66 days, from the 39 of 96 participants whose curves fitted the model. The famous 18–254 day range is partly extrapolated: the study itself only ran 84 days. It has not yet been replicated.",
+      source: "Lally, van Jaarsveld, Potts & Wardle (2010), European Journal of Social Psychology 40(6), 998–1009.",
+      url: "https://doi.org/10.1002/ejsp.674",
+      soWhat: "Eight actions per area is a year of work, not a month. Plan for the sheet to look untouched for weeks and still be working."
+    }
+  ];
+
+  var myths = [
+    {
+      claim: "“The Harvard study found the 3% who wrote their goals down earned ten times the rest.”",
+      truth: "It never happened. The story is told about Yale's class of 1953 and about Harvard, and neither institution has any record of it — Yale's own law library has answered the question by saying no such study of the class of 1953 took place. It was spread through business books from the 1980s onwards. A real, much smaller study by Gail Matthews at Dominican University did find an advantage for written goals with accountability, but it is not the study people are quoting.",
+      why: "If a goal-setting product cites this at you, it has not checked anything else either."
+    },
+    {
+      claim: "“It takes 21 days to form a habit.”",
+      truth: "This comes from Maxwell Maltz's Psycho-Cybernetics (1960), a plastic surgeon's observation about how long patients took to adjust to a new face — and he wrote “a minimum of about 21 days”. The “minimum of about” fell off in the retelling. It was never a finding about habits. Quotations of the original wording vary between sources.",
+      why: "Three weeks in, nothing will feel automatic, and that is not evidence you are failing."
+    }
+  ];
+
+  var honesty = "Every number here was read from the source it cites. Where a claim is contested, or the figure is an extrapolation, it says so. Nothing on this page was taken from a summary of a summary.";
+
+  return {
+    goalPrompts: goalPrompts, ownershipTest: ownershipTest,
+    lenses: lenses, pressureTest: pressureTest,
+    templates: templates, worked: worked,
+    evidence: evidence, myths: myths, honesty: honesty
+  };
+})();
+if (typeof globalThis !== "undefined") globalThis.HaradaGuide = HaradaGuide;
 </script>
 
 <script>
@@ -1227,6 +1900,7 @@ if (typeof globalThis !== "undefined") globalThis.HaradaCore = HaradaCore;
       fit(x.ta, i.role);
       renderProgress();
       queueSave();
+      guideRefresh();
     });
 
     // While a cell has the caret it is allowed to grow past its borders,
@@ -1270,6 +1944,7 @@ if (typeof globalThis !== "undefined") globalThis.HaradaCore = HaradaCore;
     paintAction(f, a);
     renderProgress();
     queueSave();
+    guideRefresh();
   }
 
   /** Repaint just the one action that changed, in both views. */
@@ -1409,7 +2084,15 @@ if (typeof globalThis !== "undefined") globalThis.HaradaCore = HaradaCore;
   addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { refit(); noteView(!$("sheetView").hidden); }, 120); });
 
   /* ── sheets ────────────────────────────────────────────────────────── */
-  function switchTo(id) { state.activeId = id; renderAll(); noteView(!$("sheetView").hidden); persist(); }
+  function switchTo(id) {
+    state.activeId = id;
+    renderAll();
+    noteView(!$("sheetView").hidden);
+    persist();
+    // The guide reads the active sheet, so its panels have to be rebuilt.
+    built = {}; volatile_ = {};
+    if (guideOpen) showTab(curTab);
+  }
 
   $("chartSel").addEventListener("change", function () { switchTo(this.value); });
 
@@ -1590,6 +2273,497 @@ if (typeof globalThis !== "undefined") globalThis.HaradaCore = HaradaCore;
       toast("Found a sheet from the old version and brought it across as “Recovered sheet”.", "OK", function () { });
     }, 500);
   }
+
+
+  /* ══ The guide ══════════════════════════════════════════════════════
+     Optional throughout. It opens beside the sheet and writes into it only
+     when asked. Nothing here is required to fill the chart in. */
+
+  var G = typeof HaradaGuide !== "undefined" ? HaradaGuide : null;
+  var guide = $("guide"), guideOpen = false, curTab = "goal";
+  var built = {}, volatile_ = {};
+
+  function esc(v) {
+    return String(v == null ? "" : v)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+  function el(html) {
+    var d = document.createElement("div");
+    d.innerHTML = html;
+    return d.firstElementChild;
+  }
+
+  /* ── writing into the sheet ──────────────────────────────────────── */
+  function writeGoal(text) {
+    active().goal = text;
+    $("goalLine").value = text;
+    var g = cells[C.LAYOUT.goal];
+    g.ta.value = text;
+    fit(g.ta, "goal");
+    renderProgress();
+    queueSave();
+  }
+  function writeFocus(f, text) {
+    active().focus[f] = text;
+    focusCells[f].forEach(function (x) { x.ta.value = text; fit(x.ta, x.info.role); });
+    relabelActions(f);
+    renderProgress();
+    queueSave();
+  }
+  function writeAction(f, a, text) {
+    active().actions[f][a] = text;
+    var x = cells[C.LAYOUT.actions[f][a]];
+    x.ta.value = text;
+    fit(x.ta, "action");
+    renderProgress();
+    queueSave();
+  }
+  function jumpTo(i) {
+    if (matchMedia("(max-width: 1179px)").matches) closeGuide();
+    setView("sheet");
+    cells[i].ta.focus();
+    cells[i].el.scrollIntoView({ block: "center", behavior: "smooth" });
+  }
+  function firstEmptyFocus() {
+    var c = active();
+    for (var f = 0; f < C.FOCUS_N; f++) if (!c.focus[f].trim()) return f;
+    return -1;
+  }
+
+  /* ── notes bound to the active sheet ─────────────────────────────── */
+  function noteBox(key, rows, placeholder) {
+    var ta = document.createElement("textarea");
+    ta.rows = rows || 2;
+    ta.placeholder = placeholder || "";
+    ta.value = active().notes[key] || "";
+    ta.dataset.note = key;
+    ta.addEventListener("input", function () {
+      active().notes[key] = ta.value;
+      queueSave();
+      if (volatile_.goal) volatile_.goal();
+    });
+    return ta;
+  }
+  function noteVal(key) { return (active().notes[key] || "").trim(); }
+
+  /* ── panel: the goal ─────────────────────────────────────────────── */
+  function buildGoal() {
+    var p = $("panel-goal");
+    p.innerHTML = '<p class="g-lede">The middle cell decides what the other eighty are for. ' +
+      'Answer what is useful and skip what is not — nothing here is required, and none of it is sent anywhere.</p>';
+
+    G.goalPrompts.forEach(function (q) {
+      var b = el('<div class="g-block"><p class="g-q">' + esc(q.q) + '</p>' +
+        '<p class="g-hint">' + esc(q.hint) + '</p></div>');
+      var ta = noteBox(q.key, q.rows, q.placeholder);
+      var id = "note-" + q.key;
+      ta.id = id;
+      b.querySelector(".g-q").insertAdjacentHTML("beforebegin",
+        '<label class="sr-only" for="' + id + '">' + esc(q.q) + '</label>');
+      b.appendChild(ta);
+      p.appendChild(b);
+    });
+
+    var own = el('<div class="g-block tight"><p class="g-q">' + esc(G.ownershipTest.q) + '</p>' +
+      '<p class="g-hint">' + esc(G.ownershipTest.body) + '</p>' +
+      '<div class="g-row"><button type="button" class="btn quiet" data-own="yes">Yes</button>' +
+      '<button type="button" class="btn quiet" data-own="no">Honestly, no</button></div>' +
+      '<p class="g-hint" data-own-out style="margin-top:9px"></p></div>');
+    own.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-own]");
+      if (!b) return;
+      own.querySelector("[data-own-out]").textContent =
+        b.dataset.own === "yes" ? G.ownershipTest.yes : G.ownershipTest.no;
+    });
+    p.appendChild(own);
+
+    var draft = el('<div class="g-block"><p class="g-q">Put it in the middle</p>' +
+      '<p class="g-hint">Assembled from what you wrote above. Edit it here or on the sheet — it is a starting line, not a verdict.</p>' +
+      '<div class="g-row"><button type="button" class="btn" id="draftBtn">Draft the goal line</button>' +
+      '<button type="button" class="btn quiet" id="useDraft" hidden>Use this</button></div>' +
+      '<div class="g-draft" id="draftOut" hidden></div></div>');
+    p.appendChild(draft);
+
+    $("draftBtn").addEventListener("click", function () {
+      var line = C.draftGoal({ want: noteVal("want"), measure: noteVal("measure"), by: noteVal("by") });
+      var out = $("draftOut");
+      if (!line) {
+        out.hidden = false;
+        out.innerHTML = '<em>Nothing yet</em>Answer “What do you actually want?” first.';
+        $("useDraft").hidden = true;
+        return;
+      }
+      out.hidden = false;
+      out.innerHTML = '<em>Draft</em>' + esc(line);
+      $("useDraft").hidden = false;
+      $("useDraft").dataset.line = line;
+    });
+    $("useDraft").addEventListener("click", function () {
+      var before = active().goal;
+      writeGoal(this.dataset.line);
+      toast("Written into the middle cell.", "Undo", function () { writeGoal(before); });
+    });
+
+    var check = el('<div class="g-block tight" id="goalCheck"></div>');
+    p.appendChild(check);
+
+    volatile_.goal = function () {
+      var c = active(), notes = C.critique(c.goal, "goal");
+      var h = '<p class="g-q">How the middle cell reads now</p>';
+      if (!c.goal.trim()) {
+        h += '<p class="g-hint">Nothing in the middle yet.</p>';
+      } else {
+        h += '<p class="g-hint" style="color:var(--ink);font-weight:600">' + esc(c.goal) + '</p>';
+        h += notes.length
+          ? notes.map(function (n) {
+              return '<dl style="margin-top:7px"><dt style="font-size:12.5px;font-weight:600;color:var(--seal-ink)">' +
+                esc(n.label) + '</dt><dd style="margin:0;font-size:12.5px;color:var(--ink-soft);line-height:1.55">' +
+                esc(n.why) + '</dd><dd style="margin:2px 0 0;font-size:12.5px;line-height:1.55">' + esc(n.fix) + '</dd></dl>';
+            }).join("")
+          : '<p class="g-hint" style="color:var(--seal-ink)">Reads well: it says what, how much, and by when.</p>';
+      }
+      check.innerHTML = h;
+    };
+    volatile_.goal();
+  }
+
+  /* ── panel: the eight ────────────────────────────────────────────── */
+  function buildEight() {
+    var p = $("panel-eight");
+    p.innerHTML = '<p class="g-lede">Eight areas that between them decide the goal. Pick one way in — they are ' +
+      'different questions, not different answers.</p>';
+
+    G.lenses.forEach(function (L) {
+      var card = el('<div class="g-lens" data-open="0"><button type="button" aria-expanded="false">' +
+        '<span class="nm">' + esc(L.name) + '</span><span class="mark">+</span></button>' +
+        '<div class="inner" hidden><p class="idea">' + esc(L.idea) + '</p>' +
+        '<p class="best">' + esc(L.best) + '</p><ul>' +
+        L.prompts.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") +
+        '</ul></div></div>');
+      var btn = card.querySelector("button"), inner = card.querySelector(".inner");
+      btn.addEventListener("click", function () {
+        var open = card.dataset.open === "1";
+        card.dataset.open = open ? "0" : "1";
+        inner.hidden = open;
+        btn.setAttribute("aria-expanded", open ? "false" : "true");
+        card.querySelector(".mark").textContent = open ? "+" : "−";
+      });
+      p.appendChild(card);
+    });
+
+    var pt = G.pressureTest;
+    p.appendChild(el('<div class="g-block"><p class="g-q">' + esc(pt.q) + '</p>' +
+      '<p class="g-hint">' + esc(pt.body) + '</p>' +
+      '<p class="g-hint" style="color:var(--ink)">' + esc(pt.pass) + '</p>' +
+      '<p class="g-hint" style="color:var(--ink)">' + esc(pt.fail) + '</p>' +
+      '<p class="g-hint">' + esc(pt.extra) + '</p></div>'));
+
+    var pad = el('<div class="g-block"><p class="g-q">Candidates</p>' +
+      '<p class="g-hint">One per line. Write more than eight, then cut — choosing is the work. ' +
+      'Press + to send one to the next empty area on the sheet.</p>' +
+      '<label class="sr-only" for="note-candidates">Candidate focus areas, one per line</label></div>');
+    var ta = noteBox("candidates", 5, "sleep\nstrength\nthe people around it\n…");
+    ta.id = "note-candidates";
+    pad.appendChild(ta);
+    var chips = el('<div class="chips" id="candChips"></div>');
+    pad.appendChild(chips);
+    p.appendChild(pad);
+
+    var redraw = function () {
+      var used = active().focus.map(function (x) { return x.trim().toLowerCase(); });
+      var lines = (active().notes.candidates || "").split("\n")
+        .map(function (x) { return x.trim(); }).filter(Boolean).slice(0, 40);
+      chips.innerHTML = "";
+      lines.forEach(function (line) {
+        var c = el('<span class="chip" data-used="' + (used.indexOf(line.toLowerCase()) !== -1 ? "1" : "0") + '">' +
+          '<span>' + esc(line) + '</span><button type="button">+</button></span>');
+        c.querySelector("button").addEventListener("click", function () {
+          var f = firstEmptyFocus();
+          if (f === -1) { toast("All eight areas are full. Clear one on the sheet first."); return; }
+          writeFocus(f, line);
+          toast("“" + line + "” is now area " + (f + 1) + ".", "Undo", function () { writeFocus(f, ""); redraw(); });
+          redraw();
+        });
+        chips.appendChild(c);
+      });
+      if (!lines.length) chips.innerHTML = '<span class="g-hint" style="margin:0">Nothing listed yet.</span>';
+    };
+    ta.addEventListener("input", redraw);
+    volatile_.eight = redraw;
+    redraw();
+  }
+
+  /* ── panel: the actions ──────────────────────────────────────────── */
+  function buildActions() {
+    var p = $("panel-actions");
+    p.innerHTML = '<p class="g-lede">Nothing here changes your sheet. It asks questions about what you wrote, ' +
+      'the same questions every time, so you can ignore the ones that do not apply.</p><div id="flagList"></div>';
+
+    volatile_.actions = function () {
+      var c = active(), found = C.critiqueChart(c), box = $("flagList");
+      var written = C.progress(c).actionsFilled;
+      var h = "";
+
+      var cellOf = function (item) {
+        return item.where === "goal" ? C.LAYOUT.goal : C.LAYOUT.actions[item.focus][item.action];
+      };
+      var placeOf = function (item) {
+        return item.where === "goal" ? "The middle cell"
+          : "Area " + (item.focus + 1) + (c.focus[item.focus].trim() ? " · " + c.focus[item.focus].trim() : "") +
+            " · action " + (item.action + 1);
+      };
+      var fixes = found.filter(function (x) { return x.worst === "fix"; });
+      var ideas = found.filter(function (x) { return x.worst === "idea"; });
+
+      if (!written && !c.goal.trim()) {
+        h = '<div class="g-clear">Write something on the sheet and this will have something to say.</div>';
+      } else if (!fixes.length) {
+        h = '<div class="g-clear">Nothing to fix. Every line you have written names something you could ' +
+          'actually start on a given day.</div>';
+      } else {
+        h = '<p class="g-hint" style="margin-bottom:12px">' + fixes.length +
+          (fixes.length === 1 ? " line describes a state rather than a step."
+                              : " lines describe a state rather than a step.") + '</p>';
+        fixes.forEach(function (item) {
+          h += '<div class="g-flag" data-i="' + cellOf(item) + '">' +
+            '<p class="where">' + esc(placeOf(item)) + '</p>' +
+            '<p class="txt">' + esc(item.text) + '</p><dl>' +
+            item.notes.filter(function (n) { return n.kind === "fix"; }).map(function (n) {
+              return "<dt>" + esc(n.label) + "</dt><dd>" + esc(n.why) + "</dd><dd class=\"fix\">" + esc(n.fix) + "</dd>";
+            }).join("") +
+            '</dl><div class="g-row"><button type="button" class="btn quiet" data-jump>Go to the cell</button>' +
+            '</div></div>';
+        });
+      }
+
+      // A missing cue is worth offering once, not sixty times: plenty of sound
+      // actions are one-off tasks that need no trigger.
+      if (ideas.length) {
+        h += '<div class="g-block" style="margin-top:16px"><p class="g-q">' + ideas.length +
+          (ideas.length === 1 ? " action does not say when" : " actions do not say when") + '</p>' +
+          '<p class="g-hint">Nothing is wrong with them. But for anything you mean to repeat, naming the moment ' +
+          'that sets it off — if this, then that — is the best-evidenced change on this page. One-off tasks ' +
+          'can stay as they are.</p><div class="chips">' +
+          ideas.slice(0, 12).map(function (item) {
+            return '<span class="chip" data-i="' + cellOf(item) + '"><span>' + esc(item.text) +
+              '</span><button type="button" data-ifthen>when</button></span>';
+          }).join("") + '</div></div>';
+      }
+
+      // One action per area is a reasonable place to start.
+      var starts = [];
+      for (var f = 0; f < C.FOCUS_N; f++)
+        for (var a = 0; a < C.ACTION_N; a++)
+          if (c.actions[f][a].trim() && !c.done[f][a]) { starts.push({ f: f, a: a, t: c.actions[f][a].trim() }); break; }
+      if (starts.length) {
+        h += '<div class="g-block" style="margin-top:16px"><p class="g-q">If sixty-four is too many</p>' +
+          '<p class="g-hint">Take one from each area and do only those. The first unstamped action in each:</p><ol style="margin:0;padding-left:19px;font-size:12.5px;line-height:1.7">' +
+          starts.map(function (x) { return "<li>" + esc(x.t) + "</li>"; }).join("") + "</ol></div>";
+      }
+
+      box.innerHTML = h;
+      box.querySelectorAll("[data-jump]").forEach(function (b) {
+        b.addEventListener("click", function () { jumpTo(+b.closest(".g-flag").dataset.i); });
+      });
+      box.querySelectorAll("[data-ifthen]").forEach(function (b) {
+        b.addEventListener("click", function () {
+          var i = +b.closest("[data-i]").dataset.i, info = MAP[i];
+          var before = active().actions[info.focus][info.action];
+          writeAction(info.focus, info.action, "When ‹cue›, I will " + before.charAt(0).toLowerCase() + before.slice(1));
+          jumpTo(i);
+          toast("Replace ‹cue› with the moment that sets it off.", "Undo",
+            function () { writeAction(info.focus, info.action, before); });
+        });
+      });
+    };
+    volatile_.actions();
+  }
+
+  /* ── panel: the library ──────────────────────────────────────────── */
+  function buildLibrary() {
+    var p = $("panel-library");
+    p.innerHTML = '<p class="g-lede">Starters name the eight areas and suggest a few actions each. They stop ' +
+      'short of filling the sheet on purpose: picking the actions is the part that does you good.</p>';
+
+    G.templates.forEach(function (t) {
+      var card = el('<div class="g-card"><h4>' + esc(t.name) + '</h4>' +
+        '<p class="blurb">' + esc(t.blurb) + '</p>' +
+        '<p class="goalline">' + esc(t.goal) + '</p>' +
+        '<ol class="areas">' + t.focus.map(function (f) { return "<li>" + esc(f.name) + "</li>"; }).join("") + '</ol>' +
+        '<div class="g-row"><button type="button" class="btn quiet" data-areas>Use these eight</button>' +
+        '<button type="button" class="btn quiet" data-full>Eight + suggested actions</button></div></div>');
+      card.querySelector("[data-areas]").addEventListener("click", function () { applyTemplate(t, false); });
+      card.querySelector("[data-full]").addEventListener("click", function () { applyTemplate(t, true); });
+      p.appendChild(card);
+    });
+
+    p.insertAdjacentHTML("beforeend",
+      '<h3 style="margin-top:22px">Charts worth studying</h3>' +
+      '<p class="g-lede" style="margin-top:4px">Read these rather than copy them.</p>');
+
+    G.worked.forEach(function (w) {
+      var card = el('<div class="g-card"><span class="g-tag" data-real="' + (w.real ? "1" : "0") + '">' +
+        (w.real ? "Real chart" : "Composed example") + '</span>' +
+        '<h4>' + esc(w.name) + '</h4>' +
+        '<p class="blurb">' + esc(w.note) + '</p>' +
+        '<p class="goalline">' + esc(w.goal) + '</p>' +
+        '<ol class="areas">' + w.focus.map(function (f) { return "<li>" + esc(f) + "</li>"; }).join("") + '</ol>' +
+        '<p class="blurb" style="color:var(--ink);border-left:3px solid var(--seal);padding-left:9px">' +
+        esc(w.lesson) + '</p>' +
+        (w.caveat ? '<p class="cite" style="font-size:11.5px;color:var(--ink-faint);line-height:1.45">' + esc(w.caveat) + '</p>' : "") +
+        '</div>');
+      p.appendChild(card);
+    });
+  }
+
+  function applyTemplate(t, withActions) {
+    var before = JSON.parse(JSON.stringify(active()));
+    var c = active();
+    t.focus.forEach(function (f, i) {
+      c.focus[i] = f.name;
+      if (withActions) f.actions.slice(0, C.ACTION_N).forEach(function (a, j) { c.actions[i][j] = a; });
+    });
+    renderCells();
+    renderProgress();
+    queueSave();
+    if (volatile_.eight) volatile_.eight();
+    if (volatile_.actions) volatile_.actions();
+    toast("Loaded “" + t.name + "”" + (withActions ? " with suggested actions." : "."), "Undo", function () {
+      var at = state.charts.indexOf(active());
+      state.charts[at] = C.normaliseChart(before);
+      renderAll();
+      persist();
+      if (volatile_.actions) volatile_.actions();
+    });
+  }
+
+  /* Shown in the guide and linked from the footer. Plain, checkable statements:
+     what this is, whose the method is, and what it is not. */
+  var LEGAL_HTML = '<h3 style="margin-top:22px">Attribution and terms</h3><div class="legal">' +
+    '<h4>What this is</h4><p>An independent, freely available worksheet for practising a goal-setting ' +
+    'method, together with notes on the published research around goal setting. It is a tool, not a course, ' +
+    'a certification, or a product of anyone named on this page.</p>' +
+
+    '<h4>Whose method this is</h4><p>The method of expanding one goal into eight supporting areas and sixty-four ' +
+    'actions is credited to the Japanese educator Takashi Harada, and the 9×9 chart format is widely attributed ' +
+    'to Matsumura Yasuo, who devised it in 1979. Neither the method nor the format is claimed here. A method or ' +
+    'system is not itself the subject of copyright; this page claims rights only in its own wording, code and design.</p>' +
+
+    '<h4>No affiliation</h4><p>This worksheet is not affiliated with, endorsed by, licensed by, sponsored by, or ' +
+    'connected to Takashi Harada, the Harada Education Institute, Matsumura Yasuo, Clover Management Research, ' +
+    'Shohei Ohtani, any club or league, or any other person or organisation named here. Names are used only to ' +
+    'say accurately who did what. No endorsement is implied or should be inferred.</p>' +
+
+    '<h4>About the chart attributed to Shohei Ohtani</h4><p>It is referred to as a matter of public record, with ' +
+    'sources, to illustrate how the method is used. The page uses no image of him, claims no connection, and does ' +
+    'not use his name to promote anything.</p>' +
+
+    '<h4>This is not advice</h4><p>Nothing here is professional, medical, psychological, legal or financial advice, ' +
+    'and nothing here is a recommendation to take any particular action. The research summaries describe what ' +
+    'published studies reported; they are not predictions about you, and effect sizes in the literature are ' +
+    'averages across groups, not promises to individuals. Decisions you make with this worksheet are your own.</p>' +
+
+    '<h4>Your data</h4><p>Everything typed into this page is stored in your own browser and nowhere else. There is ' +
+    'no account, no server, no analytics and no third-party tracking. A share link carries the sheet inside the ' +
+    'link itself; your private working notes are deliberately left out of it. Clearing your browser data deletes ' +
+    'your sheets, so export anything you would be sorry to lose.</p>' +
+
+    '<h4>Accuracy</h4><p>Every study cited was read at its source, and where a figure is contested, extrapolated, ' +
+    'or drawn from a body of work showing publication bias, the page says so. If you find something here that is ' +
+    'wrong, it is a bug — please report it.</p>' +
+
+    '<h4>Reusing this</h4><p>See the licence file that ships with this page for the terms. If you republish it, ' +
+    'keep this section with it: the attribution and the non-affiliation statement are the parts that make the ' +
+    'rest safe to pass on.</p></div>';
+
+  /* ── panel: the evidence ─────────────────────────────────────────── */
+  function buildEvidence() {
+    var p = $("panel-evidence");
+    p.innerHTML = '<p class="g-lede">What is actually known about whether any of this works, including where ' +
+      'the evidence is weaker than people claim.</p>';
+
+    G.evidence.forEach(function (e) {
+      p.appendChild(el('<div class="g-ev"><p class="claim">' + esc(e.claim) + '</p>' +
+        '<p>' + esc(e.finding) + '</p>' +
+        '<p class="size">' + esc(e.size) + '</p>' +
+        '<p class="sowhat">' + esc(e.soWhat) + '</p>' +
+        '<p class="cite">' + esc(e.source) + ' <a href="' + esc(e.url) + '" target="_blank" rel="noopener noreferrer">source</a></p></div>'));
+    });
+
+    p.insertAdjacentHTML("beforeend", '<h3 style="margin-top:22px">Two things you will be told that are not true</h3>');
+    G.myths.forEach(function (m) {
+      p.appendChild(el('<div class="g-myth"><p class="claim">' + esc(m.claim) + '</p>' +
+        '<p>' + esc(m.truth) + '</p>' +
+        '<p style="color:var(--ink-soft)">' + esc(m.why) + '</p></div>'));
+    });
+
+    p.insertAdjacentHTML("beforeend", '<p class="g-note">' + esc(G.honesty) + '</p>');
+    p.insertAdjacentHTML("beforeend", LEGAL_HTML);
+  }
+
+  /* ── opening and closing ─────────────────────────────────────────── */
+  var TABS = { goal: buildGoal, eight: buildEight, actions: buildActions, library: buildLibrary, evidence: buildEvidence };
+
+  function showTab(name) {
+    if (!TABS[name]) name = "goal";
+    curTab = name;
+    Object.keys(TABS).forEach(function (k) {
+      var on = k === name;
+      $("tab-" + k).setAttribute("aria-selected", on ? "true" : "false");
+      $("panel-" + k).hidden = !on;
+    });
+    if (!built[name]) { TABS[name](); built[name] = true; }
+    else if (volatile_[name]) volatile_[name]();
+    $("guideBody").scrollTop = 0;
+  }
+
+  function openGuide(tab) {
+    if (!G) { toast("The guide did not load."); return; }
+    guideOpen = true;
+    guide.dataset.open = "1";
+    guide.setAttribute("aria-hidden", "false");
+    document.body.dataset.guide = "1";
+    $("guideBtn").setAttribute("aria-expanded", "true");
+    showTab(tab || curTab);
+    $("guideClose").focus();
+    try { localStorage.setItem("harada.guide", "1"); } catch (e) { }
+  }
+  function closeGuide() {
+    guideOpen = false;
+    guide.dataset.open = "0";
+    guide.setAttribute("aria-hidden", "true");
+    delete document.body.dataset.guide;
+    $("guideBtn").setAttribute("aria-expanded", "false");
+    try { localStorage.setItem("harada.guide", "0"); } catch (e) { }
+  }
+
+  $("guideBtn").addEventListener("click", function () { guideOpen ? closeGuide() : openGuide(); });
+  $("guideClose").addEventListener("click", function () { closeGuide(); $("guideBtn").focus(); });
+  Object.keys(TABS).forEach(function (k) {
+    $("tab-" + k).addEventListener("click", function () { showTab(k); });
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && guideOpen && !document.querySelector("dialog[open]")) {
+      closeGuide();
+      $("guideBtn").focus();
+    }
+  });
+  $("legalLink").addEventListener("click", function (e) { e.preventDefault(); openGuide("evidence"); });
+
+  // Keep the live panels honest while the sheet changes underneath them.
+  var guideTimer = null;
+  function guideRefresh() {
+    if (!guideOpen) return;
+    clearTimeout(guideTimer);
+    guideTimer = setTimeout(function () {
+      if (volatile_[curTab]) volatile_[curTab]();
+    }, 350);
+  }
+
+  // Reopen where you left it. This runs at the end of the guide block, after
+  // everything it touches exists.
+  try { if (localStorage.getItem("harada.guide") === "1") openGuide(); } catch (e) { }
+
 
   if (location.protocol === "http:" || location.protocol === "https:") {
     if ("serviceWorker" in navigator)
